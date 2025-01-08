@@ -34,22 +34,19 @@ require("lazy").setup({
 		{ "rose-pine/neovim", name = "rose-pine" },
 		{"nvim-treesitter/nvim-treesitter", build = ":TSUpdate"},
 		{
-  			"NeogitOrg/neogit",
-  			dependencies = {
-    				"nvim-lua/plenary.nvim",         -- required
-    				"sindrets/diffview.nvim",        -- optional - Diff integration
+			"NeogitOrg/neogit",
+			dependencies = {
+				"nvim-lua/plenary.nvim",         -- required
+				"sindrets/diffview.nvim",        -- optional - Diff integration
 			},
 			config = true
 		},
 		{
-  			'nvimdev/dashboard-nvim',
-  			event = 'VimEnter',
-  			config = function()
-    			require('dashboard').setup {
-      				-- config
-    			}
-  			end,
-  			dependencies = { {'nvim-tree/nvim-web-devicons'}}
+			"startup-nvim/startup.nvim",
+			dependencies = { "nvim-telescope/telescope.nvim", "nvim-lua/plenary.nvim", "nvim-telescope/telescope-file-browser.nvim" },
+			config = function()
+				require "startup".setup(require'abel.startup')
+			end
 		},
 		{ "lewis6991/gitsigns.nvim", name = "gitsigns" },
 	},
