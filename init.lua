@@ -49,6 +49,10 @@ require("lazy").setup({
 			end
 		},
 		{ "lewis6991/gitsigns.nvim", name = "gitsigns" },
+		{
+			'nvim-lualine/lualine.nvim',
+			dependencies = { 'nvim-tree/nvim-web-devicons' }
+		}
 	},
 	-- Configure any other settings here. See the documentation for more details.
 	-- colorscheme that will be used when installing plugins.
@@ -56,3 +60,5 @@ require("lazy").setup({
 	-- automatically check for plugin updates
 	checker = { enabled = true },
 })
+
+require('lualine').setup()
