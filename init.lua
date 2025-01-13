@@ -173,7 +173,7 @@ require("lazy").setup({
 					},
 					config = true,
 				},
-				{'akinsho/toggleterm.nvim', version = "*", opts = { direction = 'float', size = 20 }},
+				{'akinsho/toggleterm.nvim', version = "*", opts = { direction = 'float', size = 20 , shell = 'bash' }},
 				{'akinsho/bufferline.nvim', version = "*", dependencies = 'nvim-tree/nvim-web-devicons'},
 				{
 					"karb94/neoscroll.nvim",
