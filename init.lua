@@ -85,6 +85,7 @@ require("lazy").setup({
 					event = 'VimEnter',
 					opts = {
 						theme = 'hyper',
+						shortcut_type = 'number',
 						config = require 'abel.dashboard-config',
 					},
 					dependencies = { {'nvim-tree/nvim-web-devicons'}}
@@ -125,7 +126,10 @@ require("lazy").setup({
 						"nvim-lua/plenary.nvim",
 						"MunifTanjim/nui.nvim",
 					},
-					opts = {}
+					opts = {
+						arg = "leet",
+						lang = 'python3',
+					}
 				},
 				{
 					"williamboman/mason.nvim",
