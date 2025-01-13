@@ -180,25 +180,25 @@ require("lazy").setup({
 					opts = {},
 				},
 				--{
-				--	"m4xshen/hardtime.nvim",
-				--	dependencies = { "MunifTanjim/nui.nvim" },
-				--	opts = {}
-				-- },
-				{
-					'tamton-aquib/duck.nvim',
-					config = function()
-						vim.keymap.set('n', '<leader>dd', function() require("duck").hatch("🦍") end, {})
-						vim.keymap.set('n', '<leader>dk', function() require("duck").cook() end, {})
-						vim.keymap.set('n', '<leader>da', function() require("duck").cook_all() end, {})
-					end
-				}
-			},
-			-- Configure any other settings here. See the documentation for more details.
-			-- colorscheme that will be used when installing plugins.
-			install = { colorscheme = { "vscode" } },
-			-- automatically check for plugin updates
-			checker = { enabled = true },
-		})
+					--	"m4xshen/hardtime.nvim",
+					--	dependencies = { "MunifTanjim/nui.nvim" },
+					--	opts = {}
+					-- },
+					{
+						'tamton-aquib/duck.nvim',
+						config = function()
+							vim.keymap.set('n', '<leader>dd', function() require("duck").hatch("🦍") end, {})
+							vim.keymap.set('n', '<leader>dk', function() require("duck").cook() end, {})
+							vim.keymap.set('n', '<leader>da', function() require("duck").cook_all() end, {})
+						end
+					},
+				},
+				-- Configure any other settings here. See the documentation for more details.
+				-- colorscheme that will be used when installing plugins.
+				install = { colorscheme = { "vscode" } },
+				-- automatically check for plugin updates
+				checker = { enabled = true },
+			})
 
 require('mason').setup({})
 require('mason-lspconfig').setup({
