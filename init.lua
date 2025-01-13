@@ -263,3 +263,13 @@ function _G.set_terminal_keymaps()
 end
 
 vim.cmd('autocmd! TermOpen term://* lua set_terminal_keymaps()')
+
+require'lspconfig'.lua_ls.setup{
+  settings = {
+    Lua = {
+      diagnostics = {
+        globals = {'vim'},  -- Recognize 'vim' as a global variable
+      },
+    },
+  },
+}
