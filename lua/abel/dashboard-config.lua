@@ -12,6 +12,11 @@ return {
 		[[]],
 		[[Continuous improvement is the key to success. Start through small, consistent steps.]],
 		[[]]
+	},
+	footer = {
+		[[]],
+		[[Every end is a new beginning. Keep moving forward!]],
+		[[]]
 	}
 }
 
