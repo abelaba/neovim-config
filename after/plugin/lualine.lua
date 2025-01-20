@@ -43,7 +43,13 @@ require('lualine').setup {
     lualine_c = {
       '%=', --[[ add your center compoentnts here in place of this comment ]]
     },
-    lualine_x = {},
+    lualine_x = {
+	   {
+		    require("noice").api.statusline.mode.get,
+		    cond = require("noice").api.statusline.mode.has,
+		    color = { fg = "#ff9e64" },
+	    }
+    },
     lualine_y = { 'filetype', 'progress' },
     lualine_z = {
       { 'location', separator = { right = '' }, left_padding = 2 },

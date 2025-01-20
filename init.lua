@@ -20,7 +20,7 @@ vim.g.loaded_netrwPlugin = 1
 
 -- optionally enable 24-bit colour
 vim.opt.termguicolors = true
-
+vim.opt.fileformats = "unix,dos,mac"
 vim.opt.rtp:prepend(lazypath)
 vim.wo.relativenumber = true
 -- Make sure to setup mapleader and maplocalleader before
@@ -28,23 +28,6 @@ vim.wo.relativenumber = true
 -- This is also a good place to setup other settings (vim.opt)
 vim.g.mapleader = " "
 vim.g.maplocalleader = "\\"
-
-
-vim.keymap.set('n', '<leader>bb', ':Neotree toggle reveal_force_cwd focus<CR>', { noremap = true, silent = true })
-vim.keymap.set('n', '<leader>bf', ':Neotree focus<CR>', { noremap = true, silent = true })
-vim.keymap.set('n', '<leader>`', ':ToggleTerm<CR>', { noremap = true, silent = true })
-vim.keymap.set('n', '<leader>cc', function()
-  local virtual_text = require("codeium.config").options.virtual_text
-  virtual_text.manual = not virtual_text.manual
-  print("Codeium virtual text is now " .. (not virtual_text.manual and "enabled" or "disabled"))
-end, { noremap = true, silent = true, desc = "Toggle Codeium virtual text" })
-
-vim.api.nvim_create_autocmd("BufWritePost", {
-    pattern = "*",
-    callback = function()
-        vim.cmd("FormatWrite")
-    end,
-})
 
 -- Setup lazy.nvim
 require("lazy").setup({
@@ -67,8 +50,7 @@ require("lazy").setup({
 			"goolord/alpha-nvim",
 			dependencies = { 'nvim-tree/nvim-web-devicons' },
 			config = function()
-				local startify = require("alpha.themes.startify")
-				startify.file_icons.provider = "devicons"
+				local startify = require("abel.dashboard-config")
 				require("alpha").setup(startify.config)
 			end,
 		},
@@ -109,7 +91,7 @@ require("lazy").setup({
 				"MunifTanjim/nui.nvim",
 			},
 			opts = {
-				arg = "leet",
+				arg = "l",
 				lang = 'python3',
 			}
 		},
@@ -142,7 +124,7 @@ require("lazy").setup({
 			event = "VeryLazy",
 			dependencies = {
 				"MunifTanjim/nui.nvim",
-				"rcarriga/nvim-notify",
+				-- "rcarriga/nvim-notify",
 			}
 		},
 		{ 'mhartington/formatter.nvim' },
@@ -163,7 +145,7 @@ require("lazy").setup({
 		},
 		{
 			'numToStr/Comment.nvim',
-			opts = {}
+			opts = { { toggler = { line = '<C-/>' }, options = { line = '<C-/>' }  } }
 		},
 	},
 	-- Configure any other settings here. See the documentation for more details.
@@ -193,9 +175,6 @@ require("formatter").setup({
 	},
 })
 
-require("notify").setup({
-	background_colour = "#000000",
-})
 require("flutter-tools").setup {}
 require('neoscroll').setup({
 	mappings = {                 -- Keys to be mapped to their corresponding default scrolling animation
@@ -239,3 +218,47 @@ require'lspconfig'.lua_ls.setup{
   },
 }
 
+-- Map Ctrl+Z to undo
+vim.api.nvim_set_keymap('n', '<C-z>', 'u', { noremap = true, silent = true })
+vim.api.nvim_set_keymap('i', '<C-z>', '<C-o>u', { noremap = true, silent = true })
+vim.api.nvim_set_keymap('v', '<C-z>', 'u', { noremap = true, silent = true })
+vim.api.nvim_set_keymap('x', '<C-z>', 'u', { noremap = true, silent = true })
+
+-- Ctrl+C as global copy (yanking to clipboard)
+vim.api.nvim_set_keymap('n', '<C-c>', '"+y', { noremap = true, silent = true })
+vim.api.nvim_set_keymap('i', '<C-c>', '<Esc>"+y', { noremap = true, silent = true })
+vim.api.nvim_set_keymap('v', '<C-c>', '"+y', { noremap = true, silent = true })
+vim.api.nvim_set_keymap('x', '<C-c>', '"+y', { noremap = true, silent = true })
+
+-- Ctrl+V as global paste (pasting from clipboard)
+vim.api.nvim_set_keymap('n', '<C-v>', '"+p', { noremap = true, silent = true })
+vim.api.nvim_set_keymap('i', '<C-v>', '<Esc>"+p', { noremap = true, silent = true })
+vim.api.nvim_set_keymap('v', '<C-v>', '"+p', { noremap = true, silent = true })
+vim.api.nvim_set_keymap('x', '<C-v>', '"+p', { noremap = true, silent = true })
+
+-- Map Ctrl+X to cut (yank and delete to clipboard)
+vim.api.nvim_set_keymap('n', '<C-x>', '"+d', { noremap = true, silent = true })
+vim.api.nvim_set_keymap('i', '<C-x>', '<Esc>"+d', { noremap = true, silent = true })
+vim.api.nvim_set_keymap('v', '<C-x>', '"+d', { noremap = true, silent = true })
+vim.api.nvim_set_keymap('x', '<C-x>', '"+d', { noremap = true, silent = true })
+
+-- Map Ctrl+S to save
+vim.api.nvim_set_keymap('n', '<C-s>', ':w<CR>', { noremap = true, silent = true })
+vim.api.nvim_set_keymap('i', '<C-s>', '<Esc>:w<CR>', { noremap = true, silent = true })
+vim.api.nvim_set_keymap('v', '<C-s>', ':w<CR>', { noremap = true, silent = true })
+vim.api.nvim_set_keymap('x', '<C-s>', ':w<CR>', { noremap = true, silent = true })
+
+vim.keymap.set('n', '<leader>b', ':Neotree toggle reveal_force_cwd focus<CR>', { noremap = true, silent = true })
+vim.keymap.set('n', '<C-t>', ':ToggleTerm<CR>', { noremap = true, silent = true })
+vim.keymap.set('n', '<leader>c', function()
+  local virtual_text = require("codeium.config").options.virtual_text
+  virtual_text.manual = not virtual_text.manual
+  print("Codeium virtual text is now " .. (not virtual_text.manual and "enabled" or "disabled"))
+end, { noremap = true, silent = true, desc = "Toggle Codeium virtual text" })
+
+vim.api.nvim_create_autocmd("BufWritePost", {
+    pattern = "*",
+    callback = function()
+        vim.cmd("FormatWrite")
+    end,
+})
