@@ -1,4 +1,4 @@
-require('abel')
+require("abel")
 -- Bootstrap lazy.nvim
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 if not (vim.uv or vim.loop).fs_stat(lazypath) then
@@ -23,11 +23,27 @@ vim.opt.termguicolors = true
 vim.opt.fileformats = "unix,dos,mac"
 vim.opt.rtp:prepend(lazypath)
 vim.wo.relativenumber = true
+vim.opt.shiftwidth = 4
 -- Make sure to setup mapleader and maplocalleader before
 -- loading lazy.nvim so that mappings are correct.
 -- This is also a good place to setup other settings (vim.opt)
 vim.g.mapleader = " "
 vim.g.maplocalleader = "\\"
+
+-- Neovide configuration
+vim.g.neovide_scale_factor = 1
+vim.o.guifont = "0xProto Nerd Font:h11"
+vim.g.neovide_cursor_vfx_mode = "railgun"
+-- Helper function for transparency formatting
+local alpha = function()
+	return string.format("%x", math.floor(255 * vim.g.transparency or 0.8))
+end
+-- g:neovide_transparency should be 0 if you want to unify transparency of content and title bar.
+vim.g.neovide_transparency = 0.97
+vim.g.transparency = 0.8
+vim.g.neovide_background_color = "#0f1117" .. alpha()
+vim.g.neovide_fullscreen = true
+-- vim.g.neovide_profiler = false
 
 -- Setup lazy.nvim
 require("lazy").setup({
@@ -35,20 +51,21 @@ require("lazy").setup({
 		{
 			"NeogitOrg/neogit",
 			dependencies = {
-				"nvim-lua/plenary.nvim",        
-				"sindrets/diffview.nvim", 
+				"nvim-lua/plenary.nvim",
+				"sindrets/diffview.nvim",
 				"nvim-telescope/telescope.nvim",
 			},
-			config = true
+			config = true,
 		},
 		{
-			'nvim-telescope/telescope.nvim', tag = '0.1.8',
-			dependencies = { 'nvim-lua/plenary.nvim' }
+			"nvim-telescope/telescope.nvim",
+			tag = "0.1.8",
+			dependencies = { "nvim-lua/plenary.nvim" },
 		},
 		{ "nvim-treesitter/nvim-treesitter", build = ":TSUpdate" },
 		{
 			"goolord/alpha-nvim",
-			dependencies = { 'nvim-tree/nvim-web-devicons' },
+			dependencies = { "nvim-tree/nvim-web-devicons" },
 			config = function()
 				local startify = require("abel.dashboard-config")
 				require("alpha").setup(startify.config)
@@ -56,8 +73,8 @@ require("lazy").setup({
 		},
 		{ "lewis6991/gitsigns.nvim", name = "gitsigns" },
 		{
-			'nvim-lualine/lualine.nvim',
-			dependencies = { 'nvim-tree/nvim-web-devicons' },
+			"nvim-lualine/lualine.nvim",
+			dependencies = { "nvim-tree/nvim-web-devicons" },
 		},
 		{
 			"folke/which-key.nvim",
@@ -73,14 +90,15 @@ require("lazy").setup({
 			},
 		},
 		{
-			"nvim-neo-tree/neo-tree.nvim",
-			branch = "v3.x",
+			"nvim-tree/nvim-tree.lua",
+			version = "*",
+			lazy = false,
 			dependencies = {
-				"nvim-lua/plenary.nvim",
-				"nvim-tree/nvim-web-devicons", -- not strictly required, but recommended
-				"MunifTanjim/nui.nvim",
-				"3rd/image.nvim", -- Optional image support in preview window: See # Preview Mode for more information
-			}
+				"nvim-tree/nvim-web-devicons",
+			},
+			config = function()
+				require("nvim-tree").setup({})
+			end,
 		},
 		{
 			"kawre/leetcode.nvim",
@@ -92,8 +110,8 @@ require("lazy").setup({
 			},
 			opts = {
 				arg = "l",
-				lang = 'python3',
-			}
+				lang = "python3",
+			},
 		},
 		{
 			"williamboman/mason.nvim",
@@ -104,11 +122,6 @@ require("lazy").setup({
 			"Mofiqul/vscode.nvim",
 		},
 		{
-			"ThePrimeagen/harpoon",
-			branch = "harpoon2",
-			dependencies = { "nvim-lua/plenary.nvim" }
-		},
-		{
 			"Exafunction/codeium.nvim",
 			dependencies = {
 				"nvim-lua/plenary.nvim",
@@ -116,37 +129,21 @@ require("lazy").setup({
 			},
 		},
 		{
-			'hrsh7th/nvim-cmp',
-			dependencies = { 'hrsh7th/cmp-nvim-lsp', 'L3MON4D3/LuaSnip', 'saadparwaiz1/cmp_luasnip' },
+			"hrsh7th/nvim-cmp",
+			dependencies = { "hrsh7th/cmp-nvim-lsp", "L3MON4D3/LuaSnip", "saadparwaiz1/cmp_luasnip" },
 		},
+		{ "mhartington/formatter.nvim" },
 		{
-			"folke/noice.nvim",
-			event = "VeryLazy",
-			dependencies = {
-				"MunifTanjim/nui.nvim",
-				-- "rcarriga/nvim-notify",
-			}
-		},
-		{ 'mhartington/formatter.nvim' },
-		{
-			'nvim-flutter/flutter-tools.nvim',
+			"nvim-flutter/flutter-tools.nvim",
 			lazy = false,
 			dependencies = {
-				'nvim-lua/plenary.nvim',
-				'stevearc/dressing.nvim', -- optional for vim.ui.select
+				"nvim-lua/plenary.nvim",
+				"stevearc/dressing.nvim",
 			},
 			config = true,
 		},
-		{ 'akinsho/toggleterm.nvim', version = "*", opts = { direction = 'float', size = 20 }},
-		{ 'akinsho/bufferline.nvim', version = "*", dependencies = 'nvim-tree/nvim-web-devicons' },
-		{
-			"karb94/neoscroll.nvim",
-			opts = {},
-		},
-		{
-			'numToStr/Comment.nvim',
-			opts = { { toggler = { line = '<C-/>' }, options = { line = '<C-/>' }  } }
-		},
+		{ "akinsho/bufferline.nvim", version = "*", dependencies = "nvim-tree/nvim-web-devicons" },
+		{ "nvim-pack/nvim-spectre" },
 	},
 	-- Configure any other settings here. See the documentation for more details.
 	-- colorscheme that will be used when installing plugins.
@@ -155,13 +152,13 @@ require("lazy").setup({
 	checker = { enabled = true },
 })
 
-require('mason').setup({})
-require('mason-lspconfig').setup({
-  handlers = {
-    function(server_name)
-      require('lspconfig')[server_name].setup({})
-    end,
-  },
+require("mason").setup({})
+require("mason-lspconfig").setup({
+	handlers = {
+		function(server_name)
+			require("lspconfig")[server_name].setup({})
+		end,
+	},
 })
 
 require("formatter").setup({
@@ -175,90 +172,82 @@ require("formatter").setup({
 	},
 })
 
-require("flutter-tools").setup {}
-require('neoscroll').setup({
-	mappings = {                 -- Keys to be mapped to their corresponding default scrolling animation
-		'<C-u>', '<C-d>',
-		'<C-b>', '<C-f>',
-		'<C-y>', '<C-e>',
-		'zt', 'zz', 'zb',
+require("flutter-tools").setup({})
+require("bufferline").setup({})
+
+require("lspconfig").lua_ls.setup({
+	settings = {
+		Lua = {
+			diagnostics = {
+				globals = { "vim" }, -- Recognize 'vim' as a global variable
+			},
+		},
 	},
-	hide_cursor = true,          -- Hide cursor while scrolling
-	stop_eof = true,             -- Stop at <EOF> when scrolling downwards
-	respect_scrolloff = false,   -- Stop scrolling when the cursor reaches the scrolloff margin of the file
-	cursor_scrolls_alone = true, -- The cursor will keep on scrolling even if the window cannot scroll further
-	duration_multiplier = 1.0,   -- Global duration multiplier
-	easing = 'linear',           -- Default easing function
-	pre_hook = nil,              -- Function to run before the scrolling animation starts
-	post_hook = nil,             -- Function to run after the scrolling animation ends
-	performance_mode = false,    -- Disable "Performance Mode" on all buffers.
 })
-require("bufferline").setup{}
-
-function _G.set_terminal_keymaps()
-  local opts = {buffer = 0}
-  vim.keymap.set('t', '<esc>', [[<C-\><C-n>]], opts)
-  vim.keymap.set('t', 'jk', [[<C-\><C-n>]], opts)
-  vim.keymap.set('t', '<C-h>', [[<Cmd>wincmd h<CR>]], opts)
-  vim.keymap.set('t', '<C-j>', [[<Cmd>wincmd j<CR>]], opts)
-  vim.keymap.set('t', '<C-k>', [[<Cmd>wincmd k<CR>]], opts)
-  vim.keymap.set('t', '<C-l>', [[<Cmd>wincmd l<CR>]], opts)
-  vim.keymap.set('t', '<C-w>', [[<C-\><C-n><C-w>]], opts)
-end
-
-vim.cmd('autocmd! TermOpen term://* lua set_terminal_keymaps()')
-
-require'lspconfig'.lua_ls.setup{
-  settings = {
-    Lua = {
-      diagnostics = {
-        globals = {'vim'},  -- Recognize 'vim' as a global variable
-      },
-    },
-  },
-}
 
 -- Map Ctrl+Z to undo
-vim.api.nvim_set_keymap('n', '<C-z>', 'u', { noremap = true, silent = true })
-vim.api.nvim_set_keymap('i', '<C-z>', '<C-o>u', { noremap = true, silent = true })
-vim.api.nvim_set_keymap('v', '<C-z>', 'u', { noremap = true, silent = true })
-vim.api.nvim_set_keymap('x', '<C-z>', 'u', { noremap = true, silent = true })
+vim.api.nvim_set_keymap("n", "<C-z>", "u", { noremap = true, silent = true })
+vim.api.nvim_set_keymap("i", "<C-z>", "<C-o>u", { noremap = true, silent = true })
+vim.api.nvim_set_keymap("v", "<C-z>", "u", { noremap = true, silent = true })
+vim.api.nvim_set_keymap("x", "<C-z>", "u", { noremap = true, silent = true })
 
 -- Ctrl+C as global copy (yanking to clipboard)
-vim.api.nvim_set_keymap('n', '<C-c>', '"+y', { noremap = true, silent = true })
-vim.api.nvim_set_keymap('i', '<C-c>', '<Esc>"+y', { noremap = true, silent = true })
-vim.api.nvim_set_keymap('v', '<C-c>', '"+y', { noremap = true, silent = true })
-vim.api.nvim_set_keymap('x', '<C-c>', '"+y', { noremap = true, silent = true })
+vim.api.nvim_set_keymap("n", "<C-c>", '"+y', { noremap = true, silent = true })
+vim.api.nvim_set_keymap("i", "<C-c>", '<Esc>"+y', { noremap = true, silent = true })
+vim.api.nvim_set_keymap("v", "<C-c>", '"+y', { noremap = true, silent = true })
+vim.api.nvim_set_keymap("x", "<C-c>", '"+y', { noremap = true, silent = true })
 
 -- Ctrl+V as global paste (pasting from clipboard)
-vim.api.nvim_set_keymap('n', '<C-v>', '"+p', { noremap = true, silent = true })
-vim.api.nvim_set_keymap('i', '<C-v>', '<Esc>"+p', { noremap = true, silent = true })
-vim.api.nvim_set_keymap('v', '<C-v>', '"+p', { noremap = true, silent = true })
-vim.api.nvim_set_keymap('x', '<C-v>', '"+p', { noremap = true, silent = true })
+vim.api.nvim_set_keymap("n", "<C-v>", '"+p', { noremap = true, silent = true })
+vim.api.nvim_set_keymap("i", "<C-v>", '<Esc>"+p', { noremap = true, silent = true })
+vim.api.nvim_set_keymap("v", "<C-v>", '"+p', { noremap = true, silent = true })
+vim.api.nvim_set_keymap("x", "<C-v>", '"+p', { noremap = true, silent = true })
 
 -- Map Ctrl+X to cut (yank and delete to clipboard)
-vim.api.nvim_set_keymap('n', '<C-x>', '"+d', { noremap = true, silent = true })
-vim.api.nvim_set_keymap('i', '<C-x>', '<Esc>"+d', { noremap = true, silent = true })
-vim.api.nvim_set_keymap('v', '<C-x>', '"+d', { noremap = true, silent = true })
-vim.api.nvim_set_keymap('x', '<C-x>', '"+d', { noremap = true, silent = true })
+vim.api.nvim_set_keymap("n", "<C-x>", '"+d', { noremap = true, silent = true })
+vim.api.nvim_set_keymap("i", "<C-x>", '<Esc>"+d', { noremap = true, silent = true })
+vim.api.nvim_set_keymap("v", "<C-x>", '"+d', { noremap = true, silent = true })
+vim.api.nvim_set_keymap("x", "<C-x>", '"+d', { noremap = true, silent = true })
 
 -- Map Ctrl+S to save
-vim.api.nvim_set_keymap('n', '<C-s>', ':w<CR>', { noremap = true, silent = true })
-vim.api.nvim_set_keymap('i', '<C-s>', '<Esc>:w<CR>', { noremap = true, silent = true })
-vim.api.nvim_set_keymap('v', '<C-s>', ':w<CR>', { noremap = true, silent = true })
-vim.api.nvim_set_keymap('x', '<C-s>', ':w<CR>', { noremap = true, silent = true })
+vim.api.nvim_set_keymap("n", "<C-s>", ":w<CR>", { noremap = true, silent = true })
+vim.api.nvim_set_keymap("i", "<C-s>", "<Esc>:w<CR>", { noremap = true, silent = true })
+vim.api.nvim_set_keymap("v", "<C-s>", ":w<CR>", { noremap = true, silent = true })
+vim.api.nvim_set_keymap("x", "<C-s>", ":w<CR>", { noremap = true, silent = true })
 
-vim.keymap.set('n', '<leader>b', ':Neotree toggle reveal_force_cwd focus<CR>', { noremap = true, silent = true })
-vim.keymap.set('n', '<C-t>', ':ToggleTerm<CR>', { noremap = true, silent = true })
-vim.keymap.set('n', '<leader>c', function()
-  local virtual_text = require("codeium.config").options.virtual_text
-  virtual_text.manual = not virtual_text.manual
-  print("Codeium virtual text is now " .. (not virtual_text.manual and "enabled" or "disabled"))
+-- Map Ctrl + A
+vim.api.nvim_set_keymap("n", "<C-a>", "ggVG", { noremap = true, silent = true })
+vim.api.nvim_set_keymap("i", "<C-a>", "<Esc>ggVG", { noremap = true, silent = true })
+vim.api.nvim_set_keymap("v", "<C-a>", "<Esc>ggVG", { noremap = true, silent = true })
+vim.api.nvim_set_keymap("x", "<C-a>", "<Esc>ggVG", { noremap = true, silent = true })
+
+-- -- Map Ctrl + / Comment out
+-- vim.api.nvim_set_keymap("n", "<C-,>", "gcc", { noremap = true, silent = true })
+-- vim.api.nvim_set_keymap("i", "<C-,>", "<Esc>gcc", { noremap = true, silent = true })
+-- vim.api.nvim_set_keymap("v", "<C-,>", "gc", { noremap = true, silent = true })
+-- vim.api.nvim_set_keymap("x", "<C-,>", "gc", { noremap = true, silent = true })
+
+vim.keymap.set("n", "<leader>b", ":NvimTreeToggle<CR>", { noremap = true, silent = true })
+vim.keymap.set("n", "<C-t>", ":terminal<CR>", { noremap = true, silent = true })
+vim.keymap.set("n", "<leader>c", function()
+	local virtual_text = require("codeium.config").options.virtual_text
+	virtual_text.manual = not virtual_text.manual
+	print("Codeium virtual text is now " .. (not virtual_text.manual and "enabled" or "disabled"))
 end, { noremap = true, silent = true, desc = "Toggle Codeium virtual text" })
 
 vim.api.nvim_create_autocmd("BufWritePost", {
-    pattern = "*",
-    callback = function()
-        vim.cmd("FormatWrite")
-    end,
+	pattern = "*",
+	callback = function()
+		vim.cmd("FormatWrite")
+	end,
+})
+
+vim.keymap.set("n", "<leader>F", '<cmd>lua require("spectre").toggle()<CR>', {
+	desc = "Toggle Spectre",
+})
+vim.keymap.set("n", "<leader>sw", '<cmd>lua require("spectre").open_visual({select_word=true})<CR>', {
+	desc = "Search current word",
+})
+vim.keymap.set("n", "<c-f>", '<cmd>lua require("spectre").open_file_search({select_word=true})<CR>', {
+	desc = "Search on current file",
 })
