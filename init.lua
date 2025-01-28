@@ -30,21 +30,6 @@ vim.opt.shiftwidth = 4
 vim.g.mapleader = " "
 vim.g.maplocalleader = "\\"
 
--- Neovide configuration
-vim.g.neovide_scale_factor = 1
-vim.o.guifont = "0xProto Nerd Font:h11"
-vim.g.neovide_cursor_vfx_mode = "railgun"
--- Helper function for transparency formatting
-local alpha = function()
-	return string.format("%x", math.floor(255 * vim.g.transparency or 0.8))
-end
--- g:neovide_transparency should be 0 if you want to unify transparency of content and title bar.
-vim.g.neovide_transparency = 0.97
-vim.g.transparency = 0.8
-vim.g.neovide_background_color = "#0f1117" .. alpha()
-vim.g.neovide_fullscreen = true
--- vim.g.neovide_profiler = false
-
 -- Setup lazy.nvim
 require("lazy").setup({
 	spec = {
@@ -53,7 +38,6 @@ require("lazy").setup({
 			event = "VeryLazy",
 			dependencies = {
 				"MunifTanjim/nui.nvim",
-				-- "rcarriga/nvim-notify",
 			},
 		},
 		{
@@ -150,7 +134,7 @@ require("lazy").setup({
 			},
 			config = true,
 		},
-		{ "akinsho/bufferline.nvim", version = "*", dependencies = "nvim-tree/nvim-web-devicons" },
+		-- { "akinsho/bufferline.nvim", version = "*", dependencies = "nvim-tree/nvim-web-devicons" },
 		{ "nvim-pack/nvim-spectre" },
 	},
 	-- Configure any other settings here. See the documentation for more details.
@@ -181,7 +165,7 @@ require("formatter").setup({
 })
 
 require("flutter-tools").setup({})
-require("bufferline").setup({})
+-- require("bufferline").setup({})
 
 require("lspconfig").lua_ls.setup({
 	settings = {
