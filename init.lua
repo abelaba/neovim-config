@@ -53,6 +53,10 @@ require("lazy").setup({
 			tag = "0.1.8",
 			dependencies = { "nvim-lua/plenary.nvim" },
 		},
+		{
+			"nvim-telescope/telescope-fzf-native.nvim",
+			build = "make",
+		},
 		{ "nvim-treesitter/nvim-treesitter", build = ":TSUpdate" },
 		{
 			"goolord/alpha-nvim",
@@ -135,6 +139,7 @@ require("lazy").setup({
 		},
 		-- { "akinsho/bufferline.nvim", version = "*", dependencies = "nvim-tree/nvim-web-devicons" },
 		{ "nvim-pack/nvim-spectre" },
+		{ "rcarriga/nvim-dap-ui", dependencies = { "mfussenegger/nvim-dap", "nvim-neotest/nvim-nio" } },
 	},
 	-- Configure any other settings here. See the documentation for more details.
 	-- colorscheme that will be used when installing plugins.
@@ -142,6 +147,13 @@ require("lazy").setup({
 	-- automatically check for plugin updates
 	checker = { enabled = true },
 })
+
+require("telescope").setup({
+	defaults = {
+		vimgrep_arguments = { "rg", "--no-heading", "--with-filename", "--line-number", "--column", "--smart-case" },
+	},
+})
+require("telescope").load_extension("fzf")
 
 require("mason").setup({})
 require("mason-lspconfig").setup({
