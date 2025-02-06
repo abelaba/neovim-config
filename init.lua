@@ -29,6 +29,19 @@ vim.opt.shiftwidth = 4
 vim.g.mapleader = " "
 vim.g.maplocalleader = "\\"
 
+vim.g.clipboard = {
+	name = "clip-wsl",
+	copy = {
+		["+"] = "clip.exe",
+		["*"] = "clip.exe",
+	},
+	paste = {
+		["+"] = "powershell.exe -noprofile -command 'Get-Clipboard'",
+		["*"] = "powershell.exe -noprofile -command 'Get-Clipboard'",
+	},
+	cache_enabled = true,
+}
+
 -- Setup lazy.nvim
 require("lazy").setup({
 	spec = {
