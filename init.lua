@@ -14,8 +14,8 @@ if not (vim.uv or vim.loop).fs_stat(lazypath) then
 	end
 end
 -- disable netrw at the very start of your init.lua
-vim.g.loaded_netrw = 1
-vim.g.loaded_netrwPlugin = 1
+-- vim.g.loaded_netrw = 1
+-- vim.g.loaded_netrwPlugin = 1
 
 -- optionally enable 24-bit colour
 vim.opt.termguicolors = true
@@ -45,121 +45,112 @@ vim.g.clipboard = {
 -- Setup lazy.nvim
 require("lazy").setup({
 	spec = {
-		{
-			"folke/noice.nvim",
-			event = "VeryLazy",
-			dependencies = {
-				"MunifTanjim/nui.nvim",
-			},
-		},
+		-- UI Enhancements
+		{ "folke/noice.nvim", event = "VeryLazy", dependencies = { "MunifTanjim/nui.nvim" } },
+		{ "folke/which-key.nvim", event = "VeryLazy" },
+		{ "Mofiqul/vscode.nvim" },
+
+		-- Git Integration
 		{
 			"NeogitOrg/neogit",
 			dependencies = {
 				"nvim-lua/plenary.nvim",
 				"sindrets/diffview.nvim",
+
 				"nvim-telescope/telescope.nvim",
+				"ibhagwan/fzf-lua",
+				"echasnovski/mini.pick",
 			},
-			config = true,
 		},
+		{ "lewis6991/gitsigns.nvim", name = "gitsigns", opts = {} },
+
+		-- Telescope (Fuzzy Finder & Extensions)
 		{
 			"nvim-telescope/telescope.nvim",
 			tag = "0.1.8",
 			dependencies = { "nvim-lua/plenary.nvim" },
 		},
-		{
-			"nvim-telescope/telescope-fzf-native.nvim",
-			build = "make",
-		},
+		{ "nvim-telescope/telescope-fzf-native.nvim", build = "make" },
+
+		-- Treesitter (Syntax Highlighting & Parsing)
 		{ "nvim-treesitter/nvim-treesitter", build = ":TSUpdate" },
+
+		-- Dashboard
 		{
 			"goolord/alpha-nvim",
-			dependencies = { "nvim-tree/nvim-web-devicons" },
+			dependencies = { "echasnovski/mini.icons" },
 			config = function()
-				local startify = require("abel.dashboard-config")
-				require("alpha").setup(startify.config)
+				require("alpha").setup(require("abel.dashboard-config").config)
 			end,
 		},
-		{ "lewis6991/gitsigns.nvim", name = "gitsigns" },
+
+		-- Statusline & UI Elements
 		{
 			"nvim-lualine/lualine.nvim",
 			dependencies = { "nvim-tree/nvim-web-devicons" },
+			event = "BufReadPost",
 		},
 		{
-			"folke/which-key.nvim",
-			event = "VeryLazy",
-			keys = {
-				{
-					"<leader>?",
-					function()
-						require("which-key").show({ global = false })
-					end,
-					desc = "Buffer Local Keymaps (which-key)",
-				},
-			},
-		},
-		{
-			"nvim-tree/nvim-tree.lua",
-			version = "*",
+			"stevearc/oil.nvim",
+			opts = {},
+			-- Optional dependencies
+			dependencies = { { "echasnovski/mini.icons", opts = {} } },
 			lazy = false,
+		},
+
+		-- Coding Assistance
+		{
+			"hrsh7th/nvim-cmp",
 			dependencies = {
-				"nvim-tree/nvim-web-devicons",
+				"hrsh7th/cmp-nvim-lsp",
+				"L3MON4D3/LuaSnip",
+				"saadparwaiz1/cmp_luasnip",
 			},
-			config = function()
-				require("nvim-tree").setup({})
-			end,
-		},
-		{
-			"kawre/leetcode.nvim",
-			build = ":TSUpdate html", -- if you have nvim-treesitter installed
-			dependencies = {
-				"nvim-telescope/telescope.nvim",
-				"nvim-lua/plenary.nvim",
-				"MunifTanjim/nui.nvim",
-			},
-			opts = {
-				arg = "l",
-				lang = "python3",
-			},
-		},
-		{
-			"williamboman/mason.nvim",
-			"williamboman/mason-lspconfig.nvim",
-			"neovim/nvim-lspconfig",
-		},
-		{
-			"Mofiqul/vscode.nvim",
 		},
 		{
 			"Exafunction/codeium.nvim",
-			dependencies = {
-				"nvim-lua/plenary.nvim",
-				"hrsh7th/nvim-cmp",
-			},
-		},
-		{
-			"hrsh7th/nvim-cmp",
-			dependencies = { "hrsh7th/cmp-nvim-lsp", "L3MON4D3/LuaSnip", "saadparwaiz1/cmp_luasnip" },
+			dependencies = { "nvim-lua/plenary.nvim", "hrsh7th/nvim-cmp" },
 		},
 		{ "mhartington/formatter.nvim" },
+
+		-- LSP & Debugging
+		{ "williamboman/mason.nvim" },
+		{ "williamboman/mason-lspconfig.nvim" },
+		{ "neovim/nvim-lspconfig" },
+		{
+			"rcarriga/nvim-dap-ui",
+			dependencies = { "mfussenegger/nvim-dap", "nvim-neotest/nvim-nio" },
+		},
+
+		-- Flutter Development
 		{
 			"nvim-flutter/flutter-tools.nvim",
 			lazy = false,
 			dependencies = {
 				"nvim-lua/plenary.nvim",
-				"stevearc/dressing.nvim",
+				"stevearc/dressing.nvim", -- optional for vim.ui.select
 			},
 			config = true,
 		},
-		-- { "akinsho/bufferline.nvim", version = "*", dependencies = "nvim-tree/nvim-web-devicons" },
+
+		-- LeetCode Plugin
+		{
+			"kawre/leetcode.nvim",
+			build = ":TSUpdate html",
+			dependencies = { "nvim-telescope/telescope.nvim", "nvim-lua/plenary.nvim", "MunifTanjim/nui.nvim" },
+			opts = { arg = "l", lang = "python3" },
+		},
+
+		-- Spectre (Search & Replace)
 		{ "nvim-pack/nvim-spectre" },
-		{ "rcarriga/nvim-dap-ui", dependencies = { "mfussenegger/nvim-dap", "nvim-neotest/nvim-nio" } },
 	},
-	-- Configure any other settings here. See the documentation for more details.
-	-- colorscheme that will be used when installing plugins.
+
+	-- Plugin Manager Settings
 	install = { colorscheme = { "vscode" } },
-	-- automatically check for plugin updates
 	checker = { enabled = true },
 })
+
+require("flutter-tools").setup({})
 
 require("telescope").setup({
 	defaults = {
@@ -187,9 +178,6 @@ require("formatter").setup({
 		typescriptreact = { require("formatter.filetypes.javascript").prettier },
 	},
 })
-
-require("flutter-tools").setup({})
--- require("bufferline").setup({})
 
 require("lspconfig").lua_ls.setup({
 	settings = {
@@ -262,7 +250,7 @@ vim.api.nvim_set_keymap("x", "<C-a>", "<Esc>ggVG", { noremap = true, silent = tr
 -- vim.api.nvim_set_keymap("v", "<C-,>", "gc", { noremap = true, silent = true })
 -- vim.api.nvim_set_keymap("x", "<C-,>", "gc", { noremap = true, silent = true })
 
-vim.keymap.set("n", "<leader>b", ":NvimTreeToggle<CR>", { noremap = true, silent = true })
+vim.keymap.set("n", "<leader>b", "<cmd>Oil<CR>", { noremap = true, silent = true })
 vim.keymap.set("n", "<C-t>", ":terminal<CR>", { noremap = true, silent = true })
 vim.keymap.set("n", "<leader>c", function()
 	local virtual_text = require("codeium.config").options.virtual_text
@@ -286,3 +274,4 @@ vim.keymap.set("n", "<leader>sw", '<cmd>lua require("spectre").open_visual({sele
 vim.keymap.set("n", "<c-f>", '<cmd>lua require("spectre").open_file_search({select_word=true})<CR>', {
 	desc = "Search on current file",
 })
+vim.keymap.set("n", "<leader>g", "<cmd>Neogit cwd=%:p:h<CR>", { desc = "Neogit" })
