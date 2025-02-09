@@ -58,8 +58,6 @@ require("lazy").setup({
 				"sindrets/diffview.nvim",
 
 				"nvim-telescope/telescope.nvim",
-				"ibhagwan/fzf-lua",
-				"echasnovski/mini.pick",
 			},
 		},
 		{ "lewis6991/gitsigns.nvim", name = "gitsigns", opts = {} },
@@ -240,20 +238,20 @@ require("lualine").setup({
 	options = {
 		theme = neon_theme,
 		component_separators = { left = "|", right = "|" },
-		section_separators = { left = "î‚´", right = "î‚¶" },
+		section_separators = { left = "", right = "" },
 		icons_enabled = true,
 	},
 	sections = {
-		lualine_a = { { "mode", separator = { left = "î‚¶" }, right_padding = 2 } },
+		lualine_a = { { "mode", separator = { left = "" }, right_padding = 2 } },
 		lualine_b = {
-			{ "branch", icon = "îœ¥" },
+			{ "branch", icon = "🌿" },
 		},
 		lualine_c = {
-			{ "filename", path = 1, symbols = { modified = " â—", readonly = " ï€£", unnamed = "[No Name]" } },
+			{ "filename", path = 1, symbols = { modified = "*", readonly = "", unnamed = "[No Name]" } },
 		},
 		lualine_x = { "encoding", "filetype" },
 		lualine_y = { "progress" },
-		lualine_z = { { "location", separator = { right = "î‚´" } } },
+		lualine_z = { { "location", separator = { right = "" } } },
 	},
 	inactive_sections = {
 		lualine_a = { { "filename", path = 1 } },
@@ -263,7 +261,11 @@ require("lualine").setup({
 		lualine_y = {},
 		lualine_z = { "location" },
 	},
-	tabline = {},
+	tabline = {
+		lualine_a = {},
+		lualine_b = {},
+		lualine_c = {},
+	},
 	extensions = {},
 })
 
