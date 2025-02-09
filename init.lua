@@ -208,6 +208,290 @@ require("noice").setup({
 	},
 })
 
+local colors = {
+	magenta = "#ff66b2",
+	blue = "#66d9ff",
+	cyan = "#66ffcc",
+	red = "#ff6666",
+	yellow = "#ffeb66",
+	black = "#202020",
+	grey = "#505050",
+	white = "#ffffff",
+}
+
+local neon_theme = {
+	normal = {
+		a = { fg = colors.black, bg = colors.white, gui = "bold" },
+		b = { fg = colors.white, bg = colors.black },
+		c = { fg = colors.white },
+	},
+	insert = { a = { fg = colors.black, bg = colors.blue, gui = "bold" } },
+	visual = { a = { fg = colors.black, bg = colors.cyan, gui = "bold" } },
+	replace = { a = { fg = colors.black, bg = colors.red, gui = "bold" } },
+	command = { a = { fg = colors.black, bg = colors.yellow, gui = "bold" } },
+	inactive = {
+		a = { fg = colors.white, bg = colors.black },
+		b = { fg = colors.white, bg = colors.black },
+		c = { fg = colors.white },
+	},
+}
+
+require("lualine").setup({
+	options = {
+		theme = neon_theme,
+		component_separators = { left = "|", right = "|" },
+		section_separators = { left = "î‚´", right = "î‚¶" },
+		icons_enabled = true,
+	},
+	sections = {
+		lualine_a = { { "mode", separator = { left = "î‚¶" }, right_padding = 2 } },
+		lualine_b = {
+			{ "branch", icon = "îœ¥" },
+		},
+		lualine_c = {
+			{ "filename", path = 1, symbols = { modified = " â—", readonly = " ï€£", unnamed = "[No Name]" } },
+		},
+		lualine_x = { "encoding", "filetype" },
+		lualine_y = { "progress" },
+		lualine_z = { { "location", separator = { right = "î‚´" } } },
+	},
+	inactive_sections = {
+		lualine_a = { { "filename", path = 1 } },
+		lualine_b = {},
+		lualine_c = {},
+		lualine_x = {},
+		lualine_y = {},
+		lualine_z = { "location" },
+	},
+	tabline = {},
+	extensions = {},
+})
+
+require("codeium").setup({
+	enable_cmp_source = false,
+	virtual_text = {
+		enabled = true,
+
+		manual = false,
+		filetypes = {},
+		default_filetype_enabled = true,
+		idle_delay = 75,
+		virtual_text_priority = 65535,
+		map_keys = true,
+		accept_fallback = nil,
+		key_bindings = {
+			accept = "<C-e>",
+			accept_word = false,
+			accept_line = false,
+			clear = false,
+			next = "<M-]>",
+			prev = "<M-[>",
+		},
+	},
+})
+
+local c = require("vscode.colors").get_colors()
+require("vscode").setup({
+	transparent = true,
+	italic_comments = true,
+	underline_links = true,
+	disable_nvimtree_bg = true,
+	color_overrides = {
+		vscLineNumber = "#FFFFFF",
+	},
+	group_overrides = {
+		Cursor = { fg = c.vscDarkBlue, bg = c.vscLightGreen, bold = true },
+	},
+})
+
+vim.cmd.colorscheme("vscode")
+
+require("gitsigns").setup({
+	signs = {
+		add = { text = "â”ƒ" },
+		change = { text = "â”ƒ" },
+		delete = { text = "_" },
+		topdelete = { text = "â€¾" },
+		changedelete = { text = "~" },
+		untracked = { text = "â”†" },
+	},
+	signs_staged = {
+		add = { text = "â”ƒ" },
+		change = { text = "â”ƒ" },
+		delete = { text = "_" },
+		topdelete = { text = "â€¾" },
+		changedelete = { text = "~" },
+		untracked = { text = "â”†" },
+	},
+	signs_staged_enable = true,
+	signcolumn = true, -- Toggle with `:Gitsigns toggle_signs`
+	numhl = false, -- Toggle with `:Gitsigns toggle_numhl`
+	linehl = false, -- Toggle with `:Gitsigns toggle_linehl`
+	word_diff = false, -- Toggle with `:Gitsigns toggle_word_diff`
+	watch_gitdir = {
+		follow_files = true,
+	},
+	auto_attach = true,
+	attach_to_untracked = false,
+	current_line_blame = false, -- Toggle with `:Gitsigns toggle_current_line_blame`
+	current_line_blame_opts = {
+		virt_text = true,
+		virt_text_pos = "eol", -- 'eol' | 'overlay' | 'right_align'
+		delay = 1000,
+		ignore_whitespace = false,
+		virt_text_priority = 100,
+		use_focus = true,
+	},
+	current_line_blame_formatter = "<author>, <author_time:%R> - <summary>",
+	sign_priority = 6,
+	update_debounce = 100,
+	status_formatter = nil, -- Use default
+	max_file_length = 40000, -- Disable if file is longer than this (in lines)
+	preview_config = {
+		-- Options passed to nvim_open_win
+		border = "single",
+		style = "minimal",
+		relative = "cursor",
+		row = 0,
+		col = 1,
+	},
+	on_attach = function(bufnr)
+		local gitsigns = require("gitsigns")
+
+		local function map(mode, l, r, opts)
+			opts = opts or {}
+			opts.buffer = bufnr
+			vim.keymap.set(mode, l, r, opts)
+		end
+
+		-- Navigation
+		map("n", "]c", function()
+			if vim.wo.diff then
+				vim.cmd.normal({ "]c", bang = true })
+			else
+				gitsigns.nav_hunk("next")
+			end
+		end)
+
+		map("n", "[c", function()
+			if vim.wo.diff then
+				vim.cmd.normal({ "[c", bang = true })
+			else
+				gitsigns.nav_hunk("prev")
+			end
+		end)
+
+		-- Actions
+		map("n", "<leader>hs", gitsigns.stage_hunk, { desc = "Stage hunk" })
+		map("n", "<leader>hr", gitsigns.reset_hunk, { desc = "Reset hunk" })
+		map("v", "<leader>hs", function()
+			gitsigns.stage_hunk({ vim.fn.line("."), vim.fn.line("v") })
+		end, { desc = "Stage hunk" })
+		map("v", "<leader>hr", function()
+			gitsigns.reset_hunk({ vim.fn.line("."), vim.fn.line("v") })
+		end, { desc = "Reset hunk" })
+		map("n", "<leader>hS", gitsigns.stage_buffer, { desc = "Stage buffer" })
+		map("n", "<leader>hu", gitsigns.undo_stage_hunk, { desc = "Undo stage hunk" })
+		map("n", "<leader>hR", gitsigns.reset_buffer, { desc = "Reset buffer" })
+		map("n", "<leader>hp", gitsigns.preview_hunk, { desc = "Preview hunk" })
+		map("n", "<leader>hb", function()
+			gitsigns.blame_line({ full = true })
+		end, { desc = "Blame line" })
+		map("n", "<leader>tb", gitsigns.toggle_current_line_blame, { desc = "Toggle current line blame" })
+		map("n", "<leader>hd", gitsigns.diffthis, { desc = "Diff this" })
+		map("n", "<leader>hD", function()
+			gitsigns.diffthis("~")
+		end, { desc = "Diff this ~" })
+		map("n", "<leader>td", gitsigns.toggle_deleted, { desc = "Toggle deleted" })
+
+		-- Text object
+		map({ "o", "x" }, "ih", ":<C-U>Gitsigns select_hunk<CR>")
+	end,
+})
+
+-- nvim-cmp setup
+local cmp = require("cmp")
+local luasnip = require("luasnip")
+
+luasnip.config.setup({})
+
+cmp.setup({
+	snippet = {
+		expand = function(args)
+			luasnip.lsp_expand(args.body)
+		end,
+	},
+	mapping = cmp.mapping.preset.insert({
+		["<C-d>"] = cmp.mapping.scroll_docs(-4),
+		["<C-f>"] = cmp.mapping.scroll_docs(4),
+		["<C-Space>"] = cmp.mapping.complete({}),
+		["<CR>"] = cmp.mapping.confirm({
+			behavior = cmp.ConfirmBehavior.Replace,
+			select = true,
+		}),
+		["<Tab>"] = cmp.mapping(function(fallback)
+			if cmp.visible() then
+				cmp.select_next_item()
+			elseif luasnip.expand_or_jumpable() then
+				luasnip.expand_or_jump()
+			else
+				fallback()
+			end
+		end, { "i", "s" }),
+		["<S-Tab>"] = cmp.mapping(function(fallback)
+			if cmp.visible() then
+				cmp.select_prev_item()
+			elseif luasnip.jumpable(-1) then
+				luasnip.jump(-1)
+			else
+				fallback()
+			end
+		end, { "i", "s" }),
+	}),
+	sources = {
+		{ name = "nvim_lsp" },
+		{ name = "luasnip" },
+	},
+})
+
+local builtin = require("telescope.builtin")
+vim.keymap.set("n", "<leader>f", builtin.find_files, { desc = "Telescope find files" })
+vim.keymap.set("n", "<leader>q", function()
+	builtin.live_grep({
+		additional_args = function()
+			return { "--hidden", "--no-ignore" }
+		end,
+	})
+end, { desc = "Live Grep (Faster)" })
+vim.keymap.set("n", "<leader>v", builtin.buffers, { desc = "Telescope buffers" })
+-- vim.keymap.set('n', '<leader>fh', builtin.help_tags, { desc = 'Telescope help tags' })
+
+vim.keymap.set("n", "<leader>S", function()
+	builtin.find_files({
+		prompt_title = "Neovim Config",
+		cwd = vim.fn.stdpath("config"),
+	})
+end, { desc = "Find Neovim Config Files" })
+
+vim.keymap.set("n", "<leader>G", require("telescope.builtin").git_status, { desc = "Git Files" })
+
+require("nvim-treesitter.configs").setup({
+	ensure_installed = {
+		"lua",
+		"vim",
+		"vimdoc",
+		"markdown",
+		"javascript",
+		"typescript",
+	},
+	sync_install = false,
+	auto_install = true,
+	highlight = {
+		enable = true,
+		additional_vim_regex_highlighting = false,
+	},
+})
+
 -- Map Ctrl+Z to undo
 vim.api.nvim_set_keymap("n", "<C-z>", "u", { noremap = true, silent = true })
 vim.api.nvim_set_keymap("i", "<C-z>", "<C-o>u", { noremap = true, silent = true })
@@ -274,4 +558,5 @@ vim.keymap.set("n", "<leader>sw", '<cmd>lua require("spectre").open_visual({sele
 vim.keymap.set("n", "<c-f>", '<cmd>lua require("spectre").open_file_search({select_word=true})<CR>', {
 	desc = "Search on current file",
 })
+
 vim.keymap.set("n", "<leader>g", "<cmd>Neogit cwd=%:p:h<CR>", { desc = "Neogit" })
