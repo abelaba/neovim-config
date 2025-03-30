@@ -21,7 +21,7 @@ end
 vim.opt.termguicolors = true
 vim.opt.fileformats = "unix,dos,mac"
 vim.opt.rtp:prepend(lazypath)
-vim.wo.relativenumber = true
+vim.wo.number = true
 vim.opt.shiftwidth = 4
 -- Make sure to setup mapleader and maplocalleader before
 -- loading lazy.nvim so that mappings are correct.
