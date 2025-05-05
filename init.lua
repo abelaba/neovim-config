@@ -22,12 +22,16 @@ vim.opt.termguicolors = true
 vim.opt.fileformats = "unix,dos,mac"
 vim.opt.rtp:prepend(lazypath)
 vim.wo.number = true
-vim.opt.shiftwidth = 4
+vim.opt.tabstop = 2
+vim.opt.shiftwidth = 2
+vim.opt.shell = "pwsh"
 -- Make sure to setup mapleader and maplocalleader before
 -- loading lazy.nvim so that mappings are correct.
 -- This is also a good place to setup other settings (vim.opt)
 vim.g.mapleader = " "
 vim.g.maplocalleader = "\\"
+
+vim.opt.fillchars:append({ eob = " " })
 
 vim.g.clipboard = {
 	name = "clip-wsl",
@@ -46,7 +50,6 @@ vim.g.clipboard = {
 require("lazy").setup({
 	spec = {
 		-- UI Enhancements
-		{ "folke/noice.nvim", event = "VeryLazy", dependencies = { "MunifTanjim/nui.nvim" } },
 		{ "folke/which-key.nvim", event = "VeryLazy" },
 		{ "Mofiqul/vscode.nvim" },
 
@@ -56,7 +59,6 @@ require("lazy").setup({
 			dependencies = {
 				"nvim-lua/plenary.nvim",
 				"sindrets/diffview.nvim",
-
 				"nvim-telescope/telescope.nvim",
 			},
 		},
@@ -89,11 +91,15 @@ require("lazy").setup({
 			event = "BufReadPost",
 		},
 		{
-			"stevearc/oil.nvim",
-			opts = {},
-			-- Optional dependencies
-			dependencies = { { "echasnovski/mini.icons", opts = {} } },
+			"nvim-tree/nvim-tree.lua",
+			version = "*",
 			lazy = false,
+			dependencies = {
+				"nvim-tree/nvim-web-devicons",
+			},
+			config = function()
+				require("nvim-tree").setup({})
+			end,
 		},
 
 		-- Coding Assistance
@@ -141,21 +147,55 @@ require("lazy").setup({
 
 		-- Spectre (Search & Replace)
 		{ "nvim-pack/nvim-spectre" },
+
+		-- Note Taking
+		{
+			"epwalsh/obsidian.nvim",
+			version = "*",
+			lazy = true,
+			ft = "markdown",
+			dependencies = {
+				"nvim-lua/plenary.nvim",
+			},
+		},
+		{
+			"github/copilot.vim",
+			lazy = false,
+		},
 	},
 
 	-- Plugin Manager Settings
 	install = { colorscheme = { "vscode" } },
-	checker = { enabled = true },
+	checker = { enabled = false },
 })
 
 require("flutter-tools").setup({})
-
-require("telescope").setup({
-	defaults = {
-		vimgrep_arguments = { "rg", "--no-heading", "--with-filename", "--line-number", "--column", "--smart-case" },
+require("obsidian").setup({
+	workspaces = {
+		{
+			name = "personal",
+			path = "~/Documents/vaults/personal",
+		},
 	},
 })
-require("telescope").load_extension("fzf")
+
+local telescope = require("telescope")
+telescope.setup({
+	defaults = {
+		vimgrep_arguments = {
+			"rg",
+			"--no-heading",
+			"--with-filename",
+			"--line-number",
+			"--column",
+			"--smart-case",
+			"--glob=!**/.git/*",
+			"--glob=!**/.venv/*",
+			"--glob=!**/node_modules/*",
+		},
+	},
+})
+-- telescope.load_extension("fzf")
 
 require("mason").setup({})
 require("mason-lspconfig").setup({
@@ -167,7 +207,7 @@ require("mason-lspconfig").setup({
 })
 
 require("formatter").setup({
-	logging = true,
+	logging = false,
 	filetype = {
 		lua = { require("formatter.filetypes.lua").stylua },
 		javascript = { require("formatter.filetypes.javascript").prettier },
@@ -184,25 +224,6 @@ require("lspconfig").lua_ls.setup({
 				globals = { "vim" }, -- Recognize 'vim' as a global variable
 			},
 		},
-	},
-})
-
-require("noice").setup({
-	lsp = {
-		-- override markdown rendering so that **cmp** and other plugins use **Treesitter**
-		override = {
-			["vim.lsp.util.convert_input_to_markdown_lines"] = true,
-			["vim.lsp.util.stylize_markdown"] = true,
-			["cmp.entry.get_documentation"] = true, -- requires hrsh7th/nvim-cmp
-		},
-	},
-	-- you can enable a preset for easier configuration
-	presets = {
-		bottom_search = true, -- use a classic bottom cmdline for search
-		command_palette = true, -- position the cmdline and popupmenu together
-		long_message_to_split = true, -- long messages will be sent to a split
-		inc_rename = false, -- enables an input dialog for inc-rename.nvim
-		lsp_doc_border = false, -- add a border to hover docs and signature help
 	},
 })
 
@@ -236,25 +257,28 @@ local neon_theme = {
 
 require("lualine").setup({
 	options = {
+		disabled_filetypes = { "lazy", "NvimTree" },
 		theme = neon_theme,
-		component_separators = { left = "|", right = "|" },
+		component_separators = { left = "", right = "" },
 		section_separators = { left = "", right = "" },
 		icons_enabled = true,
 	},
 	sections = {
-		lualine_a = { { "mode", separator = { left = "" }, right_padding = 2 } },
+		lualine_a = {
+			{ "mode", separator = { left = "" }, right_padding = 2 },
+		},
 		lualine_b = {
-			{ "branch", icon = "🌿" },
+			{ "branch", icon = "", separator = { right = "" } },
 		},
-		lualine_c = {
-			{ "filename", path = 1, symbols = { modified = "*", readonly = "", unnamed = "[No Name]" } },
-		},
-		lualine_x = { "encoding", "filetype" },
-		lualine_y = { "progress" },
-		lualine_z = { { "location", separator = { right = "" } } },
 	},
+	lualine_c = {
+		{ "filepath", path = 1, symbols = { modified = "*", readonly = "x", unnamed = "[No Name]" } },
+	},
+	lualine_x = { "encoding", "filetype" },
+	lualine_y = { "progress", separator = { left = "" } },
+	lualine_z = { { "location", separator = { right = "" } } },
 	inactive_sections = {
-		lualine_a = { { "filename", path = 1 } },
+		lualine_a = { { "filepath", path = 1 } },
 		lualine_b = {},
 		lualine_c = {},
 		lualine_x = {},
@@ -262,35 +286,52 @@ require("lualine").setup({
 		lualine_z = { "location" },
 	},
 	tabline = {
-		lualine_a = {},
-		lualine_b = {},
+		lualine_a = {
+			{
+				"buffers",
+				max_length = vim.o.columns,
+				symbols = {
+					modified = " ●",
+					directory = "",
+					alternate_file = "",
+					close = " ",
+				},
+				buffers_color = {
+					active = { fg = "#ffffff", bg = "#4c566a", gui = "bold" },
+				},
+			},
+		},
 		lualine_c = {},
+		lualine_b = {},
+		lualine_z = {},
+		lualine_y = {},
+		lualine_x = {},
 	},
 	extensions = {},
 })
 
-require("codeium").setup({
-	enable_cmp_source = false,
-	virtual_text = {
-		enabled = true,
-
-		manual = false,
-		filetypes = {},
-		default_filetype_enabled = true,
-		idle_delay = 75,
-		virtual_text_priority = 65535,
-		map_keys = true,
-		accept_fallback = nil,
-		key_bindings = {
-			accept = "<C-e>",
-			accept_word = false,
-			accept_line = false,
-			clear = false,
-			next = "<M-]>",
-			prev = "<M-[>",
-		},
-	},
-})
+-- require("codeium").setup({
+-- 	enable_cmp_source = false,
+-- 	virtual_text = {
+-- 		enabled = true,
+--
+-- 		manual = false,
+-- 		filetypes = {},
+-- 		default_filetype_enabled = true,
+-- 		idle_delay = 75,
+-- 		virtual_text_priority = 65535,
+-- 		map_keys = true,
+-- 		accept_fallback = nil,
+-- 		key_bindings = {
+-- 			accept = "<C-e>",
+-- 			accept_word = false,
+-- 			accept_line = false,
+-- 			clear = false,
+-- 			next = "<M-]>",
+-- 			prev = "<M-[>",
+-- 		},
+-- 	},
+-- })
 
 local c = require("vscode.colors").get_colors()
 require("vscode").setup({
@@ -530,13 +571,17 @@ vim.api.nvim_set_keymap("i", "<C-a>", "<Esc>ggVG", { noremap = true, silent = tr
 vim.api.nvim_set_keymap("v", "<C-a>", "<Esc>ggVG", { noremap = true, silent = true })
 vim.api.nvim_set_keymap("x", "<C-a>", "<Esc>ggVG", { noremap = true, silent = true })
 
+vim.api.nvim_set_keymap("n", "<leader>w", ":bd<CR>", { noremap = true, silent = true, desc = "Close Buffer" })
+vim.api.nvim_set_keymap("v", "<leader>w", ":bd<CR>", { noremap = true, silent = true, desc = "Close Buffer" })
+vim.api.nvim_set_keymap("x", "<leader>w", ":bd<CR>", { noremap = true, silent = true, desc = "Close Buffer" })
+
 -- -- Map Ctrl + / Comment out
 -- vim.api.nvim_set_keymap("n", "<C-,>", "gcc", { noremap = true, silent = true })
 -- vim.api.nvim_set_keymap("i", "<C-,>", "<Esc>gcc", { noremap = true, silent = true })
 -- vim.api.nvim_set_keymap("v", "<C-,>", "gc", { noremap = true, silent = true })
 -- vim.api.nvim_set_keymap("x", "<C-,>", "gc", { noremap = true, silent = true })
 
-vim.keymap.set("n", "<leader>b", "<cmd>Oil<CR>", { noremap = true, silent = true })
+vim.keymap.set("n", "<leader>b", "<cmd>NvimTreeToggle<CR>", { noremap = true, silent = true })
 vim.keymap.set("n", "<C-t>", ":terminal<CR>", { noremap = true, silent = true })
 vim.keymap.set("n", "<leader>c", function()
 	local virtual_text = require("codeium.config").options.virtual_text
@@ -562,3 +607,5 @@ vim.keymap.set("n", "<c-f>", '<cmd>lua require("spectre").open_file_search({sele
 })
 
 vim.keymap.set("n", "<leader>g", "<cmd>Neogit cwd=%:p:h<CR>", { desc = "Neogit" })
+
+vim.keymap.set("n", "<leader>x", "<cmd>lua vim.diagnostic.open_float()<CR>", { desc = "diagnostics" })

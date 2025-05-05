@@ -27,6 +27,16 @@ local header_lines = {
 		[[Continuous improvement is the key to success. start through small, consistent steps.]],
 		[[]],
 	},
+	{
+		[[██╗██╗  ██╗██╗ ██████╗  █████╗ ██╗]],
+		[[██║██║ ██╔╝██║██╔════╝ ██╔══██╗██║]],
+		[[██║█████╔╝ ██║██║  ███╗███████║██║]],
+		[[██║██╔═██╗ ██║██║   ██║██╔══██║██║]],
+		[[██║██║  ██╗██║╚██████╔╝██║  ██║██║]],
+		[[╚═╝╚═╝  ╚═╝╚═╝ ╚═════╝ ╚═╝  ╚═╝╚═╝]],
+		[[Concept of finding purpose in life by aligning your passion, skills, societal needs, and potential for income.]],
+	},
+
 	-- {
 	-- 	[[          ,~-.                            ]],
 	-- 	[[         (  ' )-.          ,~'`-.         ]],
