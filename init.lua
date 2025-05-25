@@ -80,7 +80,7 @@ require("lazy").setup({
 			"goolord/alpha-nvim",
 			dependencies = { "echasnovski/mini.icons" },
 			config = function()
-				require("alpha").setup(require("abel.dashboard-config").config)
+				require("alpha").setup(require("abel.startupscreen-config").config)
 			end,
 		},
 
@@ -104,23 +104,54 @@ require("lazy").setup({
 
 		-- Coding Assistance
 		{
-			"hrsh7th/nvim-cmp",
-			dependencies = {
-				"hrsh7th/cmp-nvim-lsp",
-				"L3MON4D3/LuaSnip",
-				"saadparwaiz1/cmp_luasnip",
+			'saghen/blink.cmp',
+			dependencies = { 'rafamadriz/friendly-snippets' },
+			version = '1.*',
+			opts = {
+				-- 'default' (recommended) for mappings similar to built-in completions (C-y to accept)
+				-- 'super-tab' for mappings similar to vscode (tab to accept)
+				-- 'enter' for enter to accept
+				-- 'none' for no mappings
+				--
+				-- All presets have the following mappings:
+				-- C-space: Open menu or open docs if already open
+				-- C-n/C-p or Up/Down: Select next/previous item
+				-- C-e: Hide menu
+				-- C-k: Toggle signature help (if signature.enabled = true)
+				--
+				-- See :h blink-cmp-config-keymap for defining your own keymap
+				keymap = { preset = 'enter' },
+				signature = {
+					enabled = true,
+				},
+				completion = { documentation = { auto_show = true }},
+				fuzzy = { implementation = "lua" }
 			},
+			opts_extend = { "sources.default" }
 		},
 		{
 			"Exafunction/codeium.nvim",
 			dependencies = { "nvim-lua/plenary.nvim", "hrsh7th/nvim-cmp" },
 		},
 		{ "mhartington/formatter.nvim" },
+		{
+			"github/copilot.vim",
+			lazy = false,
+		},
 
 		-- LSP & Debugging
 		{ "williamboman/mason.nvim" },
 		{ "williamboman/mason-lspconfig.nvim" },
-		{ "neovim/nvim-lspconfig" },
+		{ "neovim/nvim-lspconfig",
+				dependencies = {
+				"folke/lazydev.nvim",
+				opts = {
+					library = {
+						{ path = "${3rd}/luv/library", words = { "vim%.uv" } },
+					},
+				},
+			},
+		},
 		{
 			"rcarriga/nvim-dap-ui",
 			dependencies = { "mfussenegger/nvim-dap", "nvim-neotest/nvim-nio" },
@@ -158,16 +189,24 @@ require("lazy").setup({
 				"nvim-lua/plenary.nvim",
 			},
 		},
+		{ 'echasnovski/mini.cursorword', version = false },
 		{
-			"github/copilot.vim",
-			lazy = false,
-		},
+			"rachartier/tiny-inline-diagnostic.nvim",
+			event = "VeryLazy", -- Or `LspAttach`
+			priority = 1000, -- needs to be loaded in first
+			config = function()
+				require('tiny-inline-diagnostic').setup()
+				vim.diagnostic.config({ virtual_text = false }) -- Only if needed in your configuration, if you already have native LSP diagnostics
+			end
+		}
 	},
 
 	-- Plugin Manager Settings
 	install = { colorscheme = { "vscode" } },
 	checker = { enabled = false },
 })
+
+require('mini.cursorword').setup({})
 
 require("flutter-tools").setup({})
 require("obsidian").setup({
@@ -197,11 +236,12 @@ telescope.setup({
 })
 -- telescope.load_extension("fzf")
 
-require("mason").setup({})
+require("mason").setup()
 require("mason-lspconfig").setup({
 	handlers = {
 		function(server_name)
-			require("lspconfig")[server_name].setup({})
+			local capabilities = require('blink.cmp').get_lsp_capabilities()
+			require("lspconfig")[server_name].setup({capabilities = capabilities})
 		end,
 	},
 })
@@ -214,16 +254,6 @@ require("formatter").setup({
 		typescript = { require("formatter.filetypes.javascript").prettier },
 		javascriptreact = { require("formatter.filetypes.javascript").prettier },
 		typescriptreact = { require("formatter.filetypes.javascript").prettier },
-	},
-})
-
-require("lspconfig").lua_ls.setup({
-	settings = {
-		Lua = {
-			diagnostics = {
-				globals = { "vim" }, -- Recognize 'vim' as a global variable
-			},
-		},
 	},
 })
 
@@ -288,50 +318,22 @@ require("lualine").setup({
 	tabline = {
 		lualine_a = {
 			{
-				"buffers",
-				max_length = vim.o.columns,
-				symbols = {
-					modified = " ●",
-					directory = "",
-					alternate_file = "",
-					close = " ",
-				},
-				buffers_color = {
-					active = { fg = "#ffffff", bg = "#4c566a", gui = "bold" },
-				},
+				function()
+					local buffers = {}
+					for _, buf in ipairs(vim.api.nvim_list_bufs()) do
+						if vim.api.nvim_buf_is_loaded(buf) and vim.api.nvim_buf_get_option(buf, "modified") then
+							local bufname = vim.fn.fnamemodify(vim.api.nvim_buf_get_name(buf), ":t")
+							table.insert(buffers, bufname .. " ●")
+						end
+					end
+					return table.concat(buffers, " | ")
+				end,
+				color = { fg = "#ffffff", bg = "#4c566a", gui = "bold" },
 			},
 		},
-		lualine_c = {},
-		lualine_b = {},
-		lualine_z = {},
-		lualine_y = {},
-		lualine_x = {},
 	},
 	extensions = {},
 })
-
--- require("codeium").setup({
--- 	enable_cmp_source = false,
--- 	virtual_text = {
--- 		enabled = true,
---
--- 		manual = false,
--- 		filetypes = {},
--- 		default_filetype_enabled = true,
--- 		idle_delay = 75,
--- 		virtual_text_priority = 65535,
--- 		map_keys = true,
--- 		accept_fallback = nil,
--- 		key_bindings = {
--- 			accept = "<C-e>",
--- 			accept_word = false,
--- 			accept_line = false,
--- 			clear = false,
--- 			next = "<M-]>",
--- 			prev = "<M-[>",
--- 		},
--- 	},
--- })
 
 local c = require("vscode.colors").get_colors()
 require("vscode").setup({
@@ -351,21 +353,21 @@ vim.cmd.colorscheme("vscode")
 
 require("gitsigns").setup({
 	signs = {
-		add = { text = "â”ƒ" },
-		change = { text = "â”ƒ" },
-		delete = { text = "_" },
-		topdelete = { text = "â€¾" },
-		changedelete = { text = "~" },
-		untracked = { text = "â”†" },
-	},
-	signs_staged = {
-		add = { text = "â”ƒ" },
-		change = { text = "â”ƒ" },
-		delete = { text = "_" },
-		topdelete = { text = "â€¾" },
-		changedelete = { text = "~" },
-		untracked = { text = "â”†" },
-	},
+		add          = { text = '┃' },
+		change       = { text = '┃' },
+    delete       = { text = '_' },
+    topdelete    = { text = '‾' },
+    changedelete = { text = '~' },
+    untracked    = { text = '┆' },
+  },
+  signs_staged = {
+    add          = { text = '┃' },
+    change       = { text = '┃' },
+    delete       = { text = '_' },
+    topdelete    = { text = '‾' },
+    changedelete = { text = '~' },
+    untracked    = { text = '┆' },
+  },
 	signs_staged_enable = true,
 	signcolumn = true, -- Toggle with `:Gitsigns toggle_signs`
 	numhl = false, -- Toggle with `:Gitsigns toggle_numhl`
@@ -452,78 +454,10 @@ require("gitsigns").setup({
 	end,
 })
 
--- nvim-cmp setup
-local cmp = require("cmp")
-local luasnip = require("luasnip")
-
-luasnip.config.setup({})
-
-cmp.setup({
-	snippet = {
-		expand = function(args)
-			luasnip.lsp_expand(args.body)
-		end,
-	},
-	mapping = cmp.mapping.preset.insert({
-		["<C-d>"] = cmp.mapping.scroll_docs(-4),
-		["<C-f>"] = cmp.mapping.scroll_docs(4),
-		["<C-Space>"] = cmp.mapping.complete({}),
-		["<CR>"] = cmp.mapping.confirm({
-			behavior = cmp.ConfirmBehavior.Replace,
-			select = true,
-		}),
-		["<Tab>"] = cmp.mapping(function(fallback)
-			if cmp.visible() then
-				cmp.select_next_item()
-			elseif luasnip.expand_or_jumpable() then
-				luasnip.expand_or_jump()
-			else
-				fallback()
-			end
-		end, { "i", "s" }),
-		["<S-Tab>"] = cmp.mapping(function(fallback)
-			if cmp.visible() then
-				cmp.select_prev_item()
-			elseif luasnip.jumpable(-1) then
-				luasnip.jump(-1)
-			else
-				fallback()
-			end
-		end, { "i", "s" }),
-	}),
-	sources = {
-		{ name = "nvim_lsp" },
-		{ name = "luasnip" },
-	},
-})
-
-local builtin = require("telescope.builtin")
-vim.keymap.set("n", "<leader>f", builtin.find_files, { desc = "Telescope find files" })
-vim.keymap.set("n", "<leader>q", function()
-	builtin.live_grep({
-		additional_args = function()
-			return { "--hidden", "--no-ignore" }
-		end,
-	})
-end, { desc = "Live Grep (Faster)" })
-vim.keymap.set("n", "<leader>v", builtin.buffers, { desc = "Telescope buffers" })
--- vim.keymap.set('n', '<leader>fh', builtin.help_tags, { desc = 'Telescope help tags' })
-
-vim.keymap.set("n", "<leader>S", function()
-	builtin.find_files({
-		prompt_title = "Neovim Config",
-		cwd = vim.fn.stdpath("config"),
-	})
-end, { desc = "Find Neovim Config Files" })
-
-vim.keymap.set("n", "<leader>G", require("telescope.builtin").git_status, { desc = "Git Files" })
-
 require("nvim-treesitter.configs").setup({
 	ensure_installed = {
 		"lua",
-		"vim",
-		"vimdoc",
-		"markdown",
+		"python",
 		"javascript",
 		"typescript",
 	},
@@ -535,77 +469,26 @@ require("nvim-treesitter.configs").setup({
 	},
 })
 
--- Map Ctrl+Z to undo
-vim.api.nvim_set_keymap("n", "<C-z>", "u", { noremap = true, silent = true })
-vim.api.nvim_set_keymap("i", "<C-z>", "<C-o>u", { noremap = true, silent = true })
-vim.api.nvim_set_keymap("v", "<C-z>", "u", { noremap = true, silent = true })
-vim.api.nvim_set_keymap("x", "<C-z>", "u", { noremap = true, silent = true })
-
--- Ctrl+C as global copy (yanking to clipboard)
-vim.api.nvim_set_keymap("n", "<C-c>", '"+y', { noremap = true, silent = true })
-vim.api.nvim_set_keymap("i", "<C-c>", '<Esc>"+y', { noremap = true, silent = true })
-vim.api.nvim_set_keymap("v", "<C-c>", '"+y', { noremap = true, silent = true })
-vim.api.nvim_set_keymap("x", "<C-c>", '"+y', { noremap = true, silent = true })
-
--- Ctrl+V as global paste (pasting from clipboard)
-vim.api.nvim_set_keymap("n", "<C-v>", '"+p', { noremap = true, silent = true })
-vim.api.nvim_set_keymap("i", "<C-v>", '<Esc>"+p', { noremap = true, silent = true })
-vim.api.nvim_set_keymap("v", "<C-v>", '"+p', { noremap = true, silent = true })
-vim.api.nvim_set_keymap("x", "<C-v>", '"+p', { noremap = true, silent = true })
-
--- Map Ctrl+X to cut (yank and delete to clipboard)
-vim.api.nvim_set_keymap("n", "<C-x>", '"+d', { noremap = true, silent = true })
-vim.api.nvim_set_keymap("i", "<C-x>", '<Esc>"+d', { noremap = true, silent = true })
-vim.api.nvim_set_keymap("v", "<C-x>", '"+d', { noremap = true, silent = true })
-vim.api.nvim_set_keymap("x", "<C-x>", '"+d', { noremap = true, silent = true })
-
--- Map Ctrl+S to save
-vim.api.nvim_set_keymap("n", "<C-s>", ":w<CR>", { noremap = true, silent = true })
-vim.api.nvim_set_keymap("i", "<C-s>", "<Esc>:w<CR>", { noremap = true, silent = true })
-vim.api.nvim_set_keymap("v", "<C-s>", ":w<CR>", { noremap = true, silent = true })
-vim.api.nvim_set_keymap("x", "<C-s>", ":w<CR>", { noremap = true, silent = true })
-
--- Map Ctrl + A
-vim.api.nvim_set_keymap("n", "<C-a>", "ggVG", { noremap = true, silent = true })
-vim.api.nvim_set_keymap("i", "<C-a>", "<Esc>ggVG", { noremap = true, silent = true })
-vim.api.nvim_set_keymap("v", "<C-a>", "<Esc>ggVG", { noremap = true, silent = true })
-vim.api.nvim_set_keymap("x", "<C-a>", "<Esc>ggVG", { noremap = true, silent = true })
-
-vim.api.nvim_set_keymap("n", "<leader>w", ":bd<CR>", { noremap = true, silent = true, desc = "Close Buffer" })
-vim.api.nvim_set_keymap("v", "<leader>w", ":bd<CR>", { noremap = true, silent = true, desc = "Close Buffer" })
-vim.api.nvim_set_keymap("x", "<leader>w", ":bd<CR>", { noremap = true, silent = true, desc = "Close Buffer" })
-
--- -- Map Ctrl + / Comment out
--- vim.api.nvim_set_keymap("n", "<C-,>", "gcc", { noremap = true, silent = true })
--- vim.api.nvim_set_keymap("i", "<C-,>", "<Esc>gcc", { noremap = true, silent = true })
--- vim.api.nvim_set_keymap("v", "<C-,>", "gc", { noremap = true, silent = true })
--- vim.api.nvim_set_keymap("x", "<C-,>", "gc", { noremap = true, silent = true })
-
-vim.keymap.set("n", "<leader>b", "<cmd>NvimTreeToggle<CR>", { noremap = true, silent = true })
-vim.keymap.set("n", "<C-t>", ":terminal<CR>", { noremap = true, silent = true })
-vim.keymap.set("n", "<leader>c", function()
-	local virtual_text = require("codeium.config").options.virtual_text
-	virtual_text.manual = not virtual_text.manual
-	print("Codeium virtual text is now " .. (not virtual_text.manual and "enabled" or "disabled"))
-end, { noremap = true, silent = true, desc = "Toggle Codeium virtual text" })
-
-vim.api.nvim_create_autocmd("BufWritePost", {
-	pattern = "*",
+-- Hide statusline, tabline, line numbers, and sign column on Alpha
+vim.api.nvim_create_autocmd("User", {
+	pattern = "AlphaReady",
 	callback = function()
-		vim.cmd("FormatWrite")
+		vim.cmd([[
+		set laststatus=0
+		set showtabline=0
+		]])
 	end,
 })
 
-vim.keymap.set("n", "<leader>F", '<cmd>lua require("spectre").toggle()<CR>', {
-	desc = "Toggle Spectre",
-})
-vim.keymap.set("n", "<leader>sw", '<cmd>lua require("spectre").open_visual({select_word=true})<CR>', {
-	desc = "Search current word",
-})
-vim.keymap.set("n", "<c-f>", '<cmd>lua require("spectre").open_file_search({select_word=true})<CR>', {
-	desc = "Search on current file",
+-- Restore UI elements after leaving Alpha
+vim.api.nvim_create_autocmd("BufUnload", {
+	pattern = "*",
+	callback = function()
+		vim.cmd([[
+		set laststatus=2
+		set showtabline=2
+		]])
+	end,
 })
 
-vim.keymap.set("n", "<leader>g", "<cmd>Neogit cwd=%:p:h<CR>", { desc = "Neogit" })
-
-vim.keymap.set("n", "<leader>x", "<cmd>lua vim.diagnostic.open_float()<CR>", { desc = "diagnostics" })
+require("abel.keymaps")
