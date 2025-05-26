@@ -104,9 +104,9 @@ require("lazy").setup({
 
 		-- Coding Assistance
 		{
-			'saghen/blink.cmp',
-			dependencies = { 'rafamadriz/friendly-snippets' },
-			version = '1.*',
+			"saghen/blink.cmp",
+			dependencies = { "rafamadriz/friendly-snippets" },
+			version = "1.*",
 			opts = {
 				-- 'default' (recommended) for mappings similar to built-in completions (C-y to accept)
 				-- 'super-tab' for mappings similar to vscode (tab to accept)
@@ -120,20 +120,23 @@ require("lazy").setup({
 				-- C-k: Toggle signature help (if signature.enabled = true)
 				--
 				-- See :h blink-cmp-config-keymap for defining your own keymap
-				keymap = { preset = 'enter' },
+				keymap = { preset = "enter" },
 				signature = {
 					enabled = true,
 				},
-				completion = { documentation = { auto_show = true }},
-				fuzzy = { implementation = "lua" }
+				completion = { documentation = { auto_show = true } },
+				fuzzy = { implementation = "lua" },
 			},
-			opts_extend = { "sources.default" }
+			opts_extend = { "sources.default" },
 		},
 		{
 			"Exafunction/codeium.nvim",
 			dependencies = { "nvim-lua/plenary.nvim", "hrsh7th/nvim-cmp" },
 		},
-		{ "mhartington/formatter.nvim" },
+		{
+			"stevearc/conform.nvim",
+			opts = {},
+		},
 		{
 			"github/copilot.vim",
 			lazy = false,
@@ -142,8 +145,9 @@ require("lazy").setup({
 		-- LSP & Debugging
 		{ "williamboman/mason.nvim" },
 		{ "williamboman/mason-lspconfig.nvim" },
-		{ "neovim/nvim-lspconfig",
-				dependencies = {
+		{
+			"neovim/nvim-lspconfig",
+			dependencies = {
 				"folke/lazydev.nvim",
 				opts = {
 					library = {
@@ -189,16 +193,16 @@ require("lazy").setup({
 				"nvim-lua/plenary.nvim",
 			},
 		},
-		{ 'echasnovski/mini.cursorword', version = false },
+		{ "echasnovski/mini.cursorword", version = false },
 		{
 			"rachartier/tiny-inline-diagnostic.nvim",
 			event = "VeryLazy", -- Or `LspAttach`
 			priority = 1000, -- needs to be loaded in first
 			config = function()
-				require('tiny-inline-diagnostic').setup()
+				require("tiny-inline-diagnostic").setup()
 				vim.diagnostic.config({ virtual_text = false }) -- Only if needed in your configuration, if you already have native LSP diagnostics
-			end
-		}
+			end,
+		},
 	},
 
 	-- Plugin Manager Settings
@@ -206,7 +210,7 @@ require("lazy").setup({
 	checker = { enabled = false },
 })
 
-require('mini.cursorword').setup({})
+require("mini.cursorword").setup({})
 
 require("flutter-tools").setup({})
 require("obsidian").setup({
@@ -240,21 +244,39 @@ require("mason").setup()
 require("mason-lspconfig").setup({
 	handlers = {
 		function(server_name)
-			local capabilities = require('blink.cmp').get_lsp_capabilities()
-			require("lspconfig")[server_name].setup({capabilities = capabilities})
+			local capabilities = require("blink.cmp").get_lsp_capabilities()
+			require("lspconfig")[server_name].setup({ capabilities = capabilities })
 		end,
 	},
 })
 
-require("formatter").setup({
-	logging = false,
-	filetype = {
-		lua = { require("formatter.filetypes.lua").stylua },
-		javascript = { require("formatter.filetypes.javascript").prettier },
-		typescript = { require("formatter.filetypes.javascript").prettier },
-		javascriptreact = { require("formatter.filetypes.javascript").prettier },
-		typescriptreact = { require("formatter.filetypes.javascript").prettier },
+require("conform").setup({
+	formatters_by_ft = {
+		lua = { "stylua" },
+		-- Conform will run multiple formatters sequentially
+		python = { "isort", "black" },
+		-- Conform will run the first available formatter
+		javascript = { "prettierd", "prettier", stop_after_first = true },
+		typescript = { "prettierd", "prettier", stop_after_first = true },
+		html = { "prettierd", "prettier", stop_after_first = true },
+		css = { "prettierd", "prettier", stop_after_first = true },
+		markdown = { "prettierd", "prettier", stop_after_first = true },
+		json = { "prettierd", "prettier", stop_after_first = true },
+		yaml = { "prettierd", "prettier", stop_after_first = true },
+		typescriptreact = { "prettierd", "prettier", stop_after_first = true },
+		javascriptreact = { "prettierd", "prettier", stop_after_first = true },
 	},
+	format_on_save = {
+		timeout_ms = 1000,
+		lsp_fallback = true,
+	},
+})
+
+vim.api.nvim_create_autocmd("BufWritePre", {
+	pattern = "*",
+	callback = function(args)
+		require("conform").format({ bufnr = args.buf })
+	end,
 })
 
 local colors = {
@@ -353,21 +375,21 @@ vim.cmd.colorscheme("vscode")
 
 require("gitsigns").setup({
 	signs = {
-		add          = { text = '┃' },
-		change       = { text = '┃' },
-    delete       = { text = '_' },
-    topdelete    = { text = '‾' },
-    changedelete = { text = '~' },
-    untracked    = { text = '┆' },
-  },
-  signs_staged = {
-    add          = { text = '┃' },
-    change       = { text = '┃' },
-    delete       = { text = '_' },
-    topdelete    = { text = '‾' },
-    changedelete = { text = '~' },
-    untracked    = { text = '┆' },
-  },
+		add = { text = "┃" },
+		change = { text = "┃" },
+		delete = { text = "_" },
+		topdelete = { text = "‾" },
+		changedelete = { text = "~" },
+		untracked = { text = "┆" },
+	},
+	signs_staged = {
+		add = { text = "┃" },
+		change = { text = "┃" },
+		delete = { text = "_" },
+		topdelete = { text = "‾" },
+		changedelete = { text = "~" },
+		untracked = { text = "┆" },
+	},
 	signs_staged_enable = true,
 	signcolumn = true, -- Toggle with `:Gitsigns toggle_signs`
 	numhl = false, -- Toggle with `:Gitsigns toggle_numhl`
@@ -425,32 +447,6 @@ require("gitsigns").setup({
 				gitsigns.nav_hunk("prev")
 			end
 		end)
-
-		-- Actions
-		map("n", "<leader>hs", gitsigns.stage_hunk, { desc = "Stage hunk" })
-		map("n", "<leader>hr", gitsigns.reset_hunk, { desc = "Reset hunk" })
-		map("v", "<leader>hs", function()
-			gitsigns.stage_hunk({ vim.fn.line("."), vim.fn.line("v") })
-		end, { desc = "Stage hunk" })
-		map("v", "<leader>hr", function()
-			gitsigns.reset_hunk({ vim.fn.line("."), vim.fn.line("v") })
-		end, { desc = "Reset hunk" })
-		map("n", "<leader>hS", gitsigns.stage_buffer, { desc = "Stage buffer" })
-		map("n", "<leader>hu", gitsigns.undo_stage_hunk, { desc = "Undo stage hunk" })
-		map("n", "<leader>hR", gitsigns.reset_buffer, { desc = "Reset buffer" })
-		map("n", "<leader>hp", gitsigns.preview_hunk, { desc = "Preview hunk" })
-		map("n", "<leader>hb", function()
-			gitsigns.blame_line({ full = true })
-		end, { desc = "Blame line" })
-		map("n", "<leader>tb", gitsigns.toggle_current_line_blame, { desc = "Toggle current line blame" })
-		map("n", "<leader>hd", gitsigns.diffthis, { desc = "Diff this" })
-		map("n", "<leader>hD", function()
-			gitsigns.diffthis("~")
-		end, { desc = "Diff this ~" })
-		map("n", "<leader>td", gitsigns.toggle_deleted, { desc = "Toggle deleted" })
-
-		-- Text object
-		map({ "o", "x" }, "ih", ":<C-U>Gitsigns select_hunk<CR>")
 	end,
 })
 
