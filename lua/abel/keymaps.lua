@@ -11,17 +11,79 @@ local small_layout = {
 	},
 }
 
-vim.keymap.set("n", "<leader>f", function()
-	builtin.find_files(small_layout)
+vim.keymap.set("n", "<leader>q", function()
+	local api_ok, api = pcall(require, "nvim-tree.api")
+	local path
+
+	-- Check if nvim-tree is focused
+	if api_ok and vim.bo.filetype == "NvimTree" then
+		local node = api.tree.get_node_under_cursor()
+		path = node and node.absolute_path
+
+		-- If it's a file, use its parent directory
+		if path then
+			local stat = vim.loop.fs_stat(path)
+			if stat and stat.type == "file" then
+				path = vim.fn.fnamemodify(path, ":h")
+			end
+		end
+	end
+
+	-- Default to global search if path is not set
+	local opts = small_layout
+	if path then
+		opts.search_dirs = { path }
+	end
+
+	opts.additional_args = function()
+		return { "--hidden", "--ignore" }
+	end
+
+	builtin.find_files(opts)
 end, { desc = "Telescope find files" })
 
-vim.keymap.set("n", "<leader>q", function()
-	builtin.live_grep({
-		additional_args = function()
-			return { "--hidden", "--no-ignore" }
-		end,
-	})
-end, { desc = "Live Grep (Faster)" })
+vim.keymap.set("n", "<leader>f", function()
+	local api_ok, api = pcall(require, "nvim-tree.api")
+	local path
+
+	-- Check if nvim-tree is focused
+	if api_ok and vim.bo.filetype == "NvimTree" then
+		local node = api.tree.get_node_under_cursor()
+		path = node and node.absolute_path
+
+		-- If it's a file, use its parent directory
+		if path then
+			local stat = vim.loop.fs_stat(path)
+			if stat and stat.type == "file" then
+				path = vim.fn.fnamemodify(path, ":h")
+			end
+		end
+	end
+
+	-- Default to global search if path is not set
+	local opts = {}
+	if path then
+		opts.search_dirs = { path }
+	end
+
+	opts.additional_args = function()
+		return { "--hidden", "--ignore" }
+	end
+
+	opts.layout_strategy = "vertical"
+	opts.layout_config = {
+		vertical = {
+			prompt_position = "top",
+			mirror = true,
+			width = 0.8,
+			height = 0.9,
+		},
+	}
+
+	opts.sorting_strategy = "ascending"
+
+	builtin.live_grep(opts)
+end, { desc = "Smart Live Grep (nvim-tree-aware)" })
 
 vim.keymap.set("n", "<leader>v", function()
 	builtin.buffers(vim.tbl_extend("force", small_layout, {
@@ -38,6 +100,7 @@ vim.keymap.set("n", "<leader>S", function()
 end, { desc = "Find Neovim Config Files" })
 
 vim.keymap.set("n", "<leader>G", require("telescope.builtin").git_status, { desc = "Git Files" })
+vim.keymap.set("n", "<leader>P", ":Telescope projects<CR>", { desc = "Recent Projects" })
 
 -- Map Ctrl+Z to undo
 vim.api.nvim_set_keymap("n", "<C-z>", "u", { noremap = true, silent = true })
@@ -125,3 +188,4 @@ vim.keymap.set("n", "<leader>td", gitsigns.toggle_deleted, { desc = "Toggle dele
 
 -- Text object
 vim.keymap.set({ "o", "x" }, "ih", ":<C-U>Gitsigns select_hunk<CR>")
+vim.keymap.set("t", "<Esc>", [[<C-\><C-n>]], { noremap = true, silent = true })

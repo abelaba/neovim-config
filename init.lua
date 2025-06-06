@@ -17,6 +17,48 @@ end
 -- vim.g.loaded_netrw = 1
 -- vim.g.loaded_netrwPlugin = 1
 
+-- ======================
+--      Neovide Setup
+-- ======================
+if vim.g.neovide then
+	-- Font
+	vim.o.guifont = "Hack Nerd Font:h10" -- Set your preferred font and size
+	vim.g.neovide_fullscreen = false -- Start Neovide in fullscreen mode
+
+	-- Cursor Effects
+	-- vim.g.neovide_cursor_vfx_mode = "lightbulb" -- Options: 'pixiedust', 'torpedo', 'ripple', 'wireframe', 'sonicboom', 'railgun', 'lightbulb'
+	vim.g.neovide_cursor_animation_length = 0.05
+	vim.g.neovide_cursor_trail_size = 0.1
+	vim.g.neovide_cursor_antialiasing = true
+	vim.g.neovide_cursor_animate_command_line = true
+
+	-- Transparency
+	vim.g.neovide_opacity = 0.9
+
+	-- Floating Blur (if transparency is used)
+	vim.g.neovide_floating_blur_amount_x = 2.0
+	vim.g.neovide_floating_blur_amount_y = 2.0
+
+	-- Remember window size
+	vim.g.neovide_remember_window_size = true
+
+	-- Scroll animation
+	vim.g.neovide_scroll_animation_length = 0.3
+
+	-- Theme
+	vim.g.neovide_theme = "dark" -- 'auto', 'dark', or 'light'
+
+	-- Logo (⌘ key) support on macOS or Windows
+	vim.g.neovide_input_use_logo = true
+
+	-- Hide mouse when typing
+	vim.g.neovide_hide_mouse_when_typing = true
+	vim.cmd([[highlight Normal guibg=#282A36]])
+	vim.keymap.set("n", "<F11>", function()
+		vim.g.neovide_fullscreen = not vim.g.neovide_fullscreen
+	end, { desc = "Toggle Neovide Fullscreen" })
+end
+
 -- optionally enable 24-bit colour
 vim.opt.termguicolors = true
 vim.opt.fileformats = "unix,dos,mac"
@@ -33,22 +75,36 @@ vim.g.maplocalleader = "\\"
 
 vim.opt.fillchars:append({ eob = " " })
 
-vim.g.clipboard = {
-	name = "clip-wsl",
-	copy = {
-		["+"] = "clip.exe",
-		["*"] = "clip.exe",
-	},
-	paste = {
-		["+"] = "powershell.exe -noprofile -command 'Get-Clipboard'",
-		["*"] = "powershell.exe -noprofile -command 'Get-Clipboard'",
-	},
-	cache_enabled = true,
-}
+-- vim.g.clipboard = {
+-- 	name = "clip-wsl",
+-- 	copy = {
+-- 		["+"] = "clip.exe",
+-- 		["*"] = "clip.exe",
+-- 	},
+-- 	paste = {
+-- 		["+"] = "powershell.exe -noprofile -command 'Get-Clipboard'",
+-- 		["*"] = "powershell.exe -noprofile -command 'Get-Clipboard'",
+-- 	},
+-- 	cache_enabled = true,
+-- }
 
 -- Setup lazy.nvim
 require("lazy").setup({
 	spec = {
+		{
+			"ahmedkhalf/project.nvim",
+			config = function()
+				require("project_nvim").setup({
+					-- your configuration comes here
+					-- or leave it empty to use the default settings
+					-- refer to the configuration section below
+				})
+			end,
+		},
+		{
+			"stevearc/overseer.nvim",
+			opts = {},
+		},
 		-- UI Enhancements
 		{ "folke/which-key.nvim", event = "VeryLazy" },
 		{ "Mofiqul/vscode.nvim" },
@@ -68,9 +124,8 @@ require("lazy").setup({
 		{
 			"nvim-telescope/telescope.nvim",
 			tag = "0.1.8",
-			dependencies = { "nvim-lua/plenary.nvim" },
+			dependencies = { "nvim-lua/plenary.nvim", "nvim-telescope/telescope-fzf-native.nvim", build = "make" },
 		},
-		{ "nvim-telescope/telescope-fzf-native.nvim", build = "make" },
 
 		-- Treesitter (Syntax Highlighting & Parsing)
 		{ "nvim-treesitter/nvim-treesitter", build = ":TSUpdate" },
@@ -97,9 +152,6 @@ require("lazy").setup({
 			dependencies = {
 				"nvim-tree/nvim-web-devicons",
 			},
-			config = function()
-				require("nvim-tree").setup({})
-			end,
 		},
 
 		-- Coding Assistance
@@ -130,17 +182,23 @@ require("lazy").setup({
 			opts_extend = { "sources.default" },
 		},
 		{
-			"Exafunction/codeium.nvim",
-			dependencies = { "nvim-lua/plenary.nvim", "hrsh7th/nvim-cmp" },
+			"Exafunction/windsurf.nvim",
+			dependencies = {
+				"nvim-lua/plenary.nvim",
+				"hrsh7th/nvim-cmp",
+			},
+			config = function()
+				require("codeium").setup({})
+			end,
 		},
 		{
 			"stevearc/conform.nvim",
 			opts = {},
 		},
-		{
-			"github/copilot.vim",
-			lazy = false,
-		},
+		-- {
+		-- 	"github/copilot.vim",
+		-- 	lazy = false,
+		-- },
 
 		-- LSP & Debugging
 		{ "williamboman/mason.nvim" },
@@ -203,6 +261,26 @@ require("lazy").setup({
 				vim.diagnostic.config({ virtual_text = false }) -- Only if needed in your configuration, if you already have native LSP diagnostics
 			end,
 		},
+		{
+			"kdheepak/lazygit.nvim",
+			lazy = true,
+			cmd = {
+				"LazyGit",
+				"LazyGitConfig",
+				"LazyGitCurrentFile",
+				"LazyGitFilter",
+				"LazyGitFilterCurrentFile",
+			},
+			-- optional for floating window border decoration
+			dependencies = {
+				"nvim-lua/plenary.nvim",
+			},
+			-- setting the keybinding for LazyGit with 'keys' is recommended in
+			-- order to load the plugin when the command is run for the first time
+			keys = {
+				{ "<leader>lg", "<cmd>LazyGit<cr>", desc = "LazyGit" },
+			},
+		},
 	},
 
 	-- Plugin Manager Settings
@@ -210,6 +288,7 @@ require("lazy").setup({
 	checker = { enabled = false },
 })
 
+require("overseer").setup()
 require("mini.cursorword").setup({})
 
 require("flutter-tools").setup({})
@@ -224,6 +303,13 @@ require("obsidian").setup({
 
 local telescope = require("telescope")
 telescope.setup({
+	extensions = {
+		fzf = {
+			fuzzy = true,
+			override_generic_sorter = true,
+			override_file_sorter = true,
+		},
+	},
 	defaults = {
 		vimgrep_arguments = {
 			"rg",
@@ -238,7 +324,7 @@ telescope.setup({
 		},
 	},
 })
--- telescope.load_extension("fzf")
+telescope.load_extension("fzf")
 
 require("mason").setup()
 require("mason-lspconfig").setup({
@@ -254,7 +340,7 @@ require("conform").setup({
 	formatters_by_ft = {
 		lua = { "stylua" },
 		-- Conform will run multiple formatters sequentially
-		python = { "isort", "black" },
+		python = { "ruff" },
 		-- Conform will run the first available formatter
 		javascript = { "prettierd", "prettier", stop_after_first = true },
 		typescript = { "prettierd", "prettier", stop_after_first = true },
@@ -292,53 +378,104 @@ local colors = {
 
 local neon_theme = {
 	normal = {
-		a = { fg = colors.black, bg = colors.white, gui = "bold" },
+		a = { fg = colors.black, bg = colors.white },
 		b = { fg = colors.white, bg = colors.black },
-		c = { fg = colors.white },
+		c = { fg = colors.white, bg = colors.black },
 	},
-	insert = { a = { fg = colors.black, bg = colors.blue, gui = "bold" } },
-	visual = { a = { fg = colors.black, bg = colors.cyan, gui = "bold" } },
-	replace = { a = { fg = colors.black, bg = colors.red, gui = "bold" } },
-	command = { a = { fg = colors.black, bg = colors.yellow, gui = "bold" } },
+	insert = { a = { fg = colors.black, bg = colors.blue } },
+	visual = { a = { fg = colors.black, bg = colors.cyan } },
+	replace = { a = { fg = colors.black, bg = colors.red } },
+	command = { a = { fg = colors.black, bg = colors.yellow } },
 	inactive = {
 		a = { fg = colors.white, bg = colors.black },
 		b = { fg = colors.white, bg = colors.black },
-		c = { fg = colors.white },
+		c = { fg = colors.white, bg = colors.black },
 	},
 }
 
+local emojis = {
+	"ᕙ(⇀‸↼‶)ᕗ",
+	"(ง •̀_•́)ง",
+	"ˁ˚ᴥ˚ˀ",
+	"❚█══█❚",
+	"┌∩┐(◣_◢)┌∩┐",
+	"d[-_-]b",
+	"[¬º-°]¬",
+	"(‾⌣‾)",
+	"╰(°▽°)╯",
+}
+local current_emoji = emojis[1]
+local last_update = 0
+
+local function get_wiggly_emoji()
+	local now = os.time()
+
+	-- Update every x seconds (adjust as desired)
+	if now - last_update > 10 then
+		last_update = now
+		math.randomseed(os.time() + math.random(1000))
+
+		local base = emojis[math.random(#emojis)]
+
+		current_emoji = base
+	end
+
+	return current_emoji
+end
+
 require("lualine").setup({
 	options = {
-		disabled_filetypes = { "lazy", "NvimTree" },
+		disabled_filetypes = { "lazy", "NvimTree", "alpha", "TelescopePrompt", "TelescopeResults" },
 		theme = neon_theme,
 		component_separators = { left = "", right = "" },
 		section_separators = { left = "", right = "" },
 		icons_enabled = true,
+		globalstatus = true,
+		always_show_tabline = true,
 	},
 	sections = {
 		lualine_a = {
-			{ "mode", separator = { left = "" }, right_padding = 2 },
+			{ "mode", right_padding = 2 },
 		},
 		lualine_b = {
-			{ "branch", icon = "", separator = { right = "" } },
+			{ "branch", icon = "", symbols = { modified = " ●", readonly = " x" } },
+			{
+				"diff",
+				symbols = { added = " ", modified = " ", removed = " " },
+			},
 		},
+		lualine_c = {
+			{
+				"filename",
+				path = 1,
+				symbols = { modified = "*", readonly = "x", unnamed = "[No Name]" },
+			},
+			{ "filetype", icon_only = true },
+		},
+
+		lualine_x = {},
+		lualine_y = { { "progress" } },
+		lualine_z = { { "location" } },
 	},
-	lualine_c = {
-		{ "filepath", path = 1, symbols = { modified = "*", readonly = "x", unnamed = "[No Name]" } },
-	},
-	lualine_x = { "encoding", "filetype" },
-	lualine_y = { "progress", separator = { left = "" } },
-	lualine_z = { { "location", separator = { right = "" } } },
 	inactive_sections = {
-		lualine_a = { { "filepath", path = 1 } },
+		lualine_a = { { "filename", path = 1 }, { "filetype", icon_only = true } },
 		lualine_b = {},
 		lualine_c = {},
 		lualine_x = {},
 		lualine_y = {},
-		lualine_z = { "location" },
+		lualine_z = {},
 	},
 	tabline = {
-		lualine_a = {
+		lualine_a = {},
+		lualine_b = {},
+		lualine_x = {
+			function()
+				return get_wiggly_emoji()
+			end,
+		},
+		lualine_y = {},
+
+		lualine_c = {
 			{
 				function()
 					local buffers = {}
@@ -354,7 +491,7 @@ require("lualine").setup({
 			},
 		},
 	},
-	extensions = {},
+	eextensions = { "nvim-tree" },
 })
 
 local c = require("vscode.colors").get_colors()
@@ -464,27 +601,13 @@ require("nvim-treesitter.configs").setup({
 		additional_vim_regex_highlighting = false,
 	},
 })
-
--- Hide statusline, tabline, line numbers, and sign column on Alpha
-vim.api.nvim_create_autocmd("User", {
-	pattern = "AlphaReady",
-	callback = function()
-		vim.cmd([[
-		set laststatus=0
-		set showtabline=0
-		]])
-	end,
-})
-
--- Restore UI elements after leaving Alpha
-vim.api.nvim_create_autocmd("BufUnload", {
-	pattern = "*",
-	callback = function()
-		vim.cmd([[
-		set laststatus=2
-		set showtabline=2
-		]])
-	end,
+require("nvim-tree").setup({
+	sync_root_with_cwd = true,
+	respect_buf_cwd = true,
+	update_focused_file = {
+		enable = true,
+		update_root = true,
+	},
 })
 
 require("abel.keymaps")
