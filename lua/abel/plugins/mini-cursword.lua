@@ -1,1 +1,1 @@
-return { "echasnovski/mini.cursorword", version = false, config=function() end }
+return { "echasnovski/mini.cursorword", version = false, config = true }

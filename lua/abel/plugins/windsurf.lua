@@ -8,3 +8,4 @@ return {
 		require("codeium").setup({})
 	end,
 }
+
