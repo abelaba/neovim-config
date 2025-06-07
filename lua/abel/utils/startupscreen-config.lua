@@ -27,8 +27,8 @@ local function center_text(lines)
 	return centered_lines
 end
 
-local header_lines = require("abel.utils").header
-local footer_lines = require("abel.utils").footer
+local header_lines = require("abel.utils.header_footer").header
+local footer_lines = require("abel.utils.header_footer").footer
 
 local default_header = {
 	type = "text",
