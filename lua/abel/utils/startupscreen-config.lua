@@ -153,7 +153,7 @@ local mru_opts = {
 --- @param items_number number? optional number of items to generate, default = 10
 local function mru(start, cwd, items_number, opts)
 	opts = opts or mru_opts
-	items_number = if_nil(items_number, 10)
+	items_number = if_nil(items_number, 12)
 	local oldfiles = {}
 	for _, v in pairs(vim.v.oldfiles) do
 		if #oldfiles == items_number then
@@ -192,28 +192,21 @@ local function mru(start, cwd, items_number, opts)
 end
 
 -- MRU Project Folders
-
-local function get_mru_projects(start, items_number)
+local function get_mru_projects()
 	-- Set default for start if it's nil
 	start = start or 1 -- Default start is 100 if not passed
 	items_number = if_nil(items_number, 10)
 
-	-- Create a table to store unique project directories
-	local project_dirs = {}
-	for _, v in ipairs(vim.v.oldfiles) do
-		if #project_dirs == items_number then
-			break
-		end
-
-		local project_dir = vim.fn.fnamemodify(v, ":p:h") -- Get the directory of the file
-		if filereadable(v) == 1 and not vim.tbl_contains(project_dirs, project_dir) then
-			table.insert(project_dirs, project_dir)
-		end
+	local history = require("project_nvim.utils.history")
+	local results = history.get_recent_projects()
+	-- Reverse results
+	for i = 1, math.floor(#results / 2) do
+		results[i], results[#results - i + 1] = results[#results - i + 1], results[i]
 	end
 
 	-- Create buttons for the projects
 	local tbl = {}
-	for i, project_dir in ipairs(project_dirs) do
+	for i, project_dir in ipairs(results) do
 		local short_dir = vim.fn.fnamemodify(project_dir, ":~") -- Display relative path
 		local project_button = file_button(project_dir, tostring(i + start - 1), short_dir, false) -- Create a button for the project
 		tbl[i] = project_button
@@ -247,7 +240,7 @@ local section = {
 			{
 				type = "group",
 				val = function()
-					return get_mru_projects(1, 5)
+					return get_mru_projects()
 				end,
 				opts = {
 					position = "left", -- Left-align MRU projects section
