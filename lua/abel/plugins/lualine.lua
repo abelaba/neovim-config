@@ -77,10 +77,6 @@ return {
 				},
 				lualine_b = {
 					{ "branch", icon = "", symbols = { modified = " ●", readonly = " x" } },
-					{
-						"diff",
-						symbols = { added = " ", modified = " ", removed = " " },
-					},
 				},
 				lualine_c = {
 					{
@@ -91,7 +87,12 @@ return {
 					{ "filetype", icon_only = true },
 				},
 
-				lualine_x = {},
+				lualine_x = {
+					{
+						"diff",
+						symbols = { added = " ", modified = " ", removed = " " },
+					},
+				},
 				lualine_y = { { "progress" } },
 				lualine_z = { { "location" } },
 			},
@@ -107,9 +108,9 @@ return {
 				lualine_a = {},
 				lualine_b = {},
 				lualine_x = {
-					function()
-						return get_wiggly_emoji()
-					end,
+					-- function()
+					-- 	return get_wiggly_emoji()
+					-- end,
 				},
 				lualine_y = {},
 

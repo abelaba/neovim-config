@@ -19,6 +19,6 @@ local lazy = require("lazy")
 
 lazy.setup({
 	import = "abel.plugins",
-	install = { colorscheme = { "vscode" } },
+	install = { colorscheme = { "catppuccin" } },
 	checker = { enabled = false },
 })
