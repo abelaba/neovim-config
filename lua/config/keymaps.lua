@@ -1,3 +1,7 @@
+-- Keymaps are automatically loaded on the VeryLazy event
+-- Default keymaps that are always set: https://github.com/LazyVim/LazyVim/blob/main/lua/lazyvim/config/keymaps.lua
+-- Add any additional keymaps here
+
 local map = vim.keymap.set
 
 -- Map Ctrl+Z to undo
@@ -42,9 +46,9 @@ map("x", "<leader>w", ":bd<CR>", { noremap = true, silent = true, desc = "Close 
 
 map("n", "<C-t>", ":terminal<CR>", { noremap = true, silent = true })
 map("n", "<leader>c", function()
-	local virtual_text = require("codeium.config").options.virtual_text
-	virtual_text.manual = not virtual_text.manual
-	print("Codeium virtual text is now " .. (not virtual_text.manual and "enabled" or "disabled"))
+  local virtual_text = require("codeium.config").options.virtual_text
+  virtual_text.manual = not virtual_text.manual
+  print("Codeium virtual text is now " .. (not virtual_text.manual and "enabled" or "disabled"))
 end, { noremap = true, silent = true, desc = "Toggle Codeium virtual text" })
 
 map("n", "<leader>g", "<cmd>Neogit cwd=%:p:h<CR>", { desc = "Neogit" })
@@ -53,24 +57,23 @@ local gitsigns = require("gitsigns")
 map("n", "<leader>hs", gitsigns.stage_hunk, { desc = "Stage hunk" })
 map("n", "<leader>hr", gitsigns.reset_hunk, { desc = "Reset hunk" })
 map("v", "<leader>hs", function()
-	gitsigns.stage_hunk({ vim.fn.line("."), vim.fn.line("v") })
+  gitsigns.stage_hunk({ vim.fn.line("."), vim.fn.line("v") })
 end, { desc = "Stage hunk" })
 map("v", "<leader>hr", function()
-	gitsigns.reset_hunk({ vim.fn.line("."), vim.fn.line("v") })
+  gitsigns.reset_hunk({ vim.fn.line("."), vim.fn.line("v") })
 end, { desc = "Reset hunk" })
 map("n", "<leader>hS", gitsigns.stage_buffer, { desc = "Stage buffer" })
 map("n", "<leader>hR", gitsigns.reset_buffer, { desc = "Reset buffer" })
 map("n", "<leader>hp", gitsigns.preview_hunk, { desc = "Preview hunk" })
 map("n", "<leader>hb", function()
-	gitsigns.blame_line({ full = true })
+  gitsigns.blame_line({ full = true })
 end, { desc = "Blame line" })
 map("n", "<leader>tb", gitsigns.toggle_current_line_blame, { desc = "Toggle current line blame" })
 map("n", "<leader>hd", gitsigns.diffthis, { desc = "Diff this" })
 map("n", "<leader>hD", function()
-	gitsigns.diffthis("~")
+  gitsigns.diffthis("~")
 end, { desc = "Diff this ~" })
 
 -- Text object
 map({ "o", "x" }, "ih", ":<C-U>Gitsigns select_hunk<CR>")
 map("t", "<Esc>", [[<C-\><C-n>]], { noremap = true, silent = true })
-map("n", "<leader>e", "<cmd>NvimTreeToggle<CR>", { noremap = true, silent = true })
