@@ -73,4 +73,12 @@ end, { desc = "Diff this ~" })
 -- Text object
 map({ "o", "x" }, "ih", ":<C-U>Gitsigns select_hunk<CR>")
 map("t", "<Esc>", [[<C-\><C-n>]], { noremap = true, silent = true })
-map("n", "<leader>e", "<cmd>NvimTreeToggle<CR>", { noremap = true, silent = true })
+map("n", "<leader>e", function()
+	local util = require("lspconfig.util")
+	local path = vim.api.nvim_buf_get_name(0)
+	local root = util.root_pattern(".git")(path) or vim.fn.getcwd()
+	require("neo-tree.command").execute({
+		toggle = true,
+		dir = root,
+	})
+end, { noremap = true, silent = true, desc = "Toggle Neo-tree at project root" })
