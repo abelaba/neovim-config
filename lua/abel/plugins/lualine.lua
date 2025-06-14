@@ -64,7 +64,7 @@ return {
 		require("lualine").setup({
 			options = {
 				disabled_filetypes = { "lazy", "NvimTree", "alpha", "TelescopePrompt", "TelescopeResults" },
-				theme = neon_theme,
+				theme = "catppuccin",
 				component_separators = { left = "", right = "" },
 				section_separators = { left = "", right = "" },
 				icons_enabled = true,
@@ -76,7 +76,7 @@ return {
 					{ "mode", right_padding = 2 },
 				},
 				lualine_b = {
-					{ "branch", icon = "", symbols = { modified = " ●", readonly = " x" } },
+					{ "branch", icon = "🥷", symbols = { modified = " ●", readonly = " x" } },
 				},
 				lualine_c = {
 					{
