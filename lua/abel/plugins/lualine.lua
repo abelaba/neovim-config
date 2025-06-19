@@ -60,6 +60,7 @@ return {
 	"nvim-lualine/lualine.nvim",
 	dependencies = { "nvim-tree/nvim-web-devicons" },
 	event = "BufReadPost",
+	lazy = true,
 	config = function()
 		require("lualine").setup({
 			options = {

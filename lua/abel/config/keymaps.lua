@@ -100,3 +100,36 @@ map("n", "<leader>bo", function()
 	Snacks.bufdelete.other()
 end, { desc = "Delete Other Buffers" })
 map("n", "<leader>bD", "<cmd>:bd<cr>", { desc = "Delete Buffer and Window" })
+
+-- Load the default session for the current working directory
+map("n", "<leader>qs", function()
+	require("persistence").load()
+end, { desc = "Load session for current directory" })
+
+-- Select a session to load from a list
+map("n", "<leader>qS", function()
+	require("persistence").select()
+end, { desc = "Select session to load" })
+
+-- Load the last saved session regardless of directory
+map("n", "<leader>ql", function()
+	require("persistence").load({ last = true })
+end, { desc = "Load last session" })
+
+-- Disable Persistence so the current session won't be saved on exit
+map("n", "<leader>qd", function()
+	require("persistence").stop()
+end, { desc = "Disable session saving (stop Persistence)" })
+
+-- normal mode
+map("n", "d", '"_d', { noremap = true })
+map("n", "D", '"_D', { noremap = true })
+map("n", "x", '"_x', { noremap = true })
+map("n", "c", '"_c', { noremap = true })
+map("n", "C", '"_C', { noremap = true })
+map("n", "dd", '"_dd', { noremap = true })
+
+-- visual mode
+map("v", "d", '"_d', { noremap = true })
+map("v", "x", '"_x', { noremap = true })
+map("v", "c", '"_c', { noremap = true })

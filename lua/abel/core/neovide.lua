@@ -32,6 +32,8 @@ if vim.g.neovide then
 	-- Logo (⌘ key) support on macOS or Windows
 	vim.g.neovide_input_use_logo = true
 
+	vim.o.clipboard = "unnamedplus"
+
 	-- Hide mouse when typing
 	vim.g.neovide_hide_mouse_when_typing = true
 	vim.cmd([[highlight Normal guibg=#282A36]])
