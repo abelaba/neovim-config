@@ -1,8 +1,9 @@
 return {
-  "folke/snacks.nvim",
-  priority = 1000,
-  lazy = false,
+  "snacks.nvim",
   opts = {
     explorer = { enabled = false },
+    dashboard = {
+      preset = { header = require("config.header").greeting() },
+    },
   },
 }
