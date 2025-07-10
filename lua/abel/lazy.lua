@@ -20,5 +20,5 @@ local lazy = require("lazy")
 lazy.setup({
 	import = "abel.plugins",
 	install = { colorscheme = { "catppuccin" } },
-	checker = { enabled = false },
+	checker = { enabled = true },
 })

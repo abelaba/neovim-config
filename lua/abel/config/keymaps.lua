@@ -47,8 +47,6 @@ map("n", "<leader>c", function()
 	print("Codeium virtual text is now " .. (not virtual_text.manual and "enabled" or "disabled"))
 end, { noremap = true, silent = true, desc = "Toggle Codeium virtual text" })
 
-map("n", "<leader>g", "<cmd>Neogit cwd=%:p:h<CR>", { desc = "Neogit" })
-
 local gitsigns = require("gitsigns")
 map("n", "<leader>hs", gitsigns.stage_hunk, { desc = "Stage hunk" })
 map("n", "<leader>hr", gitsigns.reset_hunk, { desc = "Reset hunk" })

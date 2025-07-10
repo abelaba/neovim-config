@@ -341,42 +341,42 @@ return {
 				desc = "Colorschemes",
 			},
 			-- LSP
-			{
-				"gd",
-				function()
-					Snacks.picker.lsp_definitions()
-				end,
-				desc = "Goto Definition",
-			},
-			{
-				"gD",
-				function()
-					Snacks.picker.lsp_declarations()
-				end,
-				desc = "Goto Declaration",
-			},
-			{
-				"gr",
-				function()
-					Snacks.picker.lsp_references()
-				end,
-				nowait = true,
-				desc = "References",
-			},
-			{
-				"gI",
-				function()
-					Snacks.picker.lsp_implementations()
-				end,
-				desc = "Goto Implementation",
-			},
-			{
-				"gy",
-				function()
-					Snacks.picker.lsp_type_definitions()
-				end,
-				desc = "Goto T[y]pe Definition",
-			},
+			-- {
+			-- 	"gd",
+			-- 	function()
+			-- 		Snacks.picker.lsp_definitions()
+			-- 	end,
+			-- 	desc = "Goto Definition",
+			-- },
+			-- {
+			-- 	"gD",
+			-- 	function()
+			-- 		Snacks.picker.lsp_declarations()
+			-- 	end,
+			-- 	desc = "Goto Declaration",
+			-- },
+			-- {
+			-- 	"gr",
+			-- 	function()
+			-- 		Snacks.picker.lsp_references()
+			-- 	end,
+			-- 	nowait = true,
+			-- 	desc = "References",
+			-- },
+			-- {
+			-- 	"gI",
+			-- 	function()
+			-- 		Snacks.picker.lsp_implementations()
+			-- 	end,
+			-- 	desc = "Goto Implementation",
+			-- },
+			-- {
+			-- 	"gy",
+			-- 	function()
+			-- 		Snacks.picker.lsp_type_definitions()
+			-- 	end,
+			-- 	desc = "Goto T[y]pe Definition",
+			-- },
 			{
 				"<leader>ss",
 				function()
@@ -551,6 +551,38 @@ return {
 			dashboard = {
 				preset = {
 					header = require("abel.utils.header").Get_greeting(),
+					keys = {
+						{
+							icon = " ",
+							key = "f",
+							desc = "Find File",
+							action = ":lua Snacks.dashboard.pick('files')",
+						},
+						{ icon = " ", key = "n", desc = "New File", action = ":ene | startinsert" },
+						{
+							icon = " ",
+							key = "g",
+							desc = "Find Text",
+							action = ":lua Snacks.dashboard.pick('live_grep')",
+						},
+						{
+							icon = " ",
+							key = "r",
+							desc = "Recent Files",
+							action = ":lua Snacks.dashboard.pick('oldfiles')",
+						},
+						{
+							icon = " ",
+							key = "c",
+							desc = "Config",
+							action = ":lua Snacks.dashboard.pick('files', {cwd = vim.fn.stdpath('config')})",
+						},
+						{ icon = " ", key = "p", desc = "Projects", action = "<leader>fp" },
+						{ icon = " ", key = "s", desc = "Restore Session", section = "session" },
+						{ icon = " ", key = "x", desc = "Lazy Extras", action = ":LazyExtras" },
+						{ icon = "󰒲 ", key = "l", desc = "Lazy", action = ":Lazy" },
+						{ icon = " ", key = "q", desc = "Quit", action = ":qa" },
+					},
 				},
 			},
 		},
