@@ -6,3 +6,4 @@ vim.api.nvim_create_autocmd("BufWritePre", {
 })
 
 require("abel.config.keymaps")
+require("abel.config.telescope")
