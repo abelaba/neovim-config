@@ -70,7 +70,7 @@ end, { desc = "Diff this ~" })
 
 -- Text object
 map({ "o", "x" }, "ih", ":<C-U>Gitsigns select_hunk<CR>")
-map("t", "<Esc>", [[<C-\><C-n>]], { noremap = true, silent = true })
+map("t", "<C-space>", [[<C-\><C-n>]], { noremap = true, silent = true })
 map("n", "<leader>e", function()
 	local util = require("lspconfig.util")
 	local path = vim.api.nvim_buf_get_name(0)
@@ -118,6 +118,8 @@ end, { desc = "Load last session" })
 map("n", "<leader>qd", function()
 	require("persistence").stop()
 end, { desc = "Disable session saving (stop Persistence)" })
+
+map("n", "<leader>gg", ":GitTab<CR>", { desc = "GitUI" })
 
 -- normal mode
 map("n", "d", '"_d', { noremap = true })

@@ -33,7 +33,7 @@ if vim.g.neovide then
 	vim.g.neovide_input_use_logo = true
 
 	vim.o.clipboard = "unnamedplus"
-
+	vim.g.neovide_fullscreen = true
 	-- Hide mouse when typing
 	vim.g.neovide_hide_mouse_when_typing = true
 	vim.cmd([[highlight Normal guibg=#282A36]])

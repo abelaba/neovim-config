@@ -449,13 +449,13 @@ return {
 			-- 		desc = "Git Browse",
 			-- 		mode = { "n", "v" },
 			-- 	},
-			{
-				"<leader>gg",
-				function()
-					Snacks.terminal({ "gitui" })
-				end,
-				desc = "GitUi (cwd)",
-			},
+			-- {
+			-- 	"<leader>gg",
+			-- 	function()
+			-- 		Snacks.terminal({ "gitui" })
+			-- 	end,
+			-- 	desc = "GitUi (cwd)",
+			-- },
 			-- 	{
 			-- 		"<leader>un",
 			-- 		function()
