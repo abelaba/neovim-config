@@ -28,7 +28,7 @@ return {
 				{ "<leader>,", builtin.buffers, desc = "Switch Buffer" },
 				{ "<leader>/", builtin.live_grep, desc = "Grep (Root Dir)" },
 				{ "<leader>:", builtin.command_history, desc = "Command History" },
-				{ "<leader><space>", builtin.find_files, desc = "Find Files (Root Dir)" },
+				{ "<leader><space>", builtin.oldfiles, desc = "Find Files (Root Dir)" },
 				{
 					"<leader>fb",
 					function()
@@ -52,7 +52,6 @@ return {
 					desc = "Find Files (cwd)",
 				},
 				{ "<leader>fg", builtin.git_files, desc = "Find Files (git-files)" },
-				{ "<leader>fr", builtin.oldfiles, desc = "Recent Files" },
 				{
 					"<leader>fR",
 					function()
