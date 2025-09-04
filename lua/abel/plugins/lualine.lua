@@ -65,7 +65,7 @@ return {
 		require("lualine").setup({
 			options = {
 				disabled_filetypes = { "lazy", "NvimTree", "alpha", "TelescopePrompt", "TelescopeResults" },
-				theme = "catppuccin",
+				theme = "auto",
 				component_separators = { left = "", right = "" },
 				section_separators = { left = "", right = "" },
 				icons_enabled = true,
