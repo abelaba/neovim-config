@@ -133,7 +133,3 @@ map("n", "dd", '"_dd', { noremap = true })
 map("v", "d", '"_d', { noremap = true })
 map("v", "x", '"_x', { noremap = true })
 map("v", "c", '"_c', { noremap = true })
-
-map("n", "<leader>F", "<cmd>:GrugFar<cr>", { noremap = true })
-map("v", "<leader>F", "<cmd>:GrugFar<cr>", { noremap = true })
-map("i", "<leader>F", "<cmd>:GrugFar<cr>", { noremap = true })
