@@ -8,3 +8,4 @@ vim.api.nvim_create_autocmd("BufWritePre", {
 require("abel.config.keymaps")
 require("abel.config.telescope")
 require("abel.config.gittab")
+require("abel.config.nvim-lsp-config")
