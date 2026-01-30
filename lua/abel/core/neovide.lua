@@ -3,7 +3,7 @@
 -- ======================
 if vim.g.neovide then
 	-- Font
-	vim.o.guifont = "Hack Nerd Font:h10" -- Set your preferred font and size
+	-- vim.o.guifont = "Hack Nerd Font:h10" -- Set your preferred font and size
 	vim.g.neovide_fullscreen = false -- Start Neovide in fullscreen mode
 
 	-- Cursor Effects
@@ -12,9 +12,10 @@ if vim.g.neovide then
 	vim.g.neovide_cursor_trail_size = 0.1
 	vim.g.neovide_cursor_antialiasing = true
 	vim.g.neovide_cursor_animate_command_line = true
+	vim.g.neovide_scale_factor = 1.2
 
 	-- Transparency
-	vim.g.neovide_opacity = 0.96
+	vim.g.neovide_opacity = 1
 
 	-- Floating Blur (if transparency is used)
 	vim.g.neovide_floating_blur_amount_x = 2.0
@@ -33,10 +34,9 @@ if vim.g.neovide then
 	vim.g.neovide_input_use_logo = true
 
 	vim.o.clipboard = "unnamedplus"
-	vim.g.neovide_fullscreen = true
 	-- Hide mouse when typing
 	vim.g.neovide_hide_mouse_when_typing = true
-	vim.cmd([[highlight Normal guibg=#282A36]])
+	vim.cmd([[highlight clear]])
 	vim.keymap.set("n", "<F11>", function()
 		vim.g.neovide_fullscreen = not vim.g.neovide_fullscreen
 	end, { desc = "Toggle Neovide Fullscreen" })

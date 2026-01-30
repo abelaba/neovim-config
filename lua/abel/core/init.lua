@@ -14,7 +14,7 @@ vim.g.mapleader = " "
 vim.g.maplocalleader = "\\"
 
 vim.opt.fillchars:append({ eob = " " })
-vim.opt.shell = "pwsh"
+-- vim.opt.shell = "cmd"
 vim.o.shellcmdflag = "-NoLogo -NoProfile -Command" -- Make sure to setup mapleader and maplocalleader before
 vim.o.shellquote = [["]]
 vim.o.shellxquote = ""
