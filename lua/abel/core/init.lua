@@ -15,9 +15,13 @@ vim.g.maplocalleader = "\\"
 
 vim.opt.fillchars:append({ eob = " " })
 -- vim.opt.shell = "cmd"
-vim.o.shellcmdflag = "-NoLogo -NoProfile -Command" -- Make sure to setup mapleader and maplocalleader before
-vim.o.shellquote = [["]]
-vim.o.shellxquote = ""
+--
+local is_windows = vim.fn.has("win32") == 1
+if is_windows then
+	vim.o.shellcmdflag = "-NoLogo -NoProfile -Command" -- Make sure to setup mapleader and maplocalleader before
+	vim.o.shellquote = [["]]
+	vim.o.shellxquote = ""
+end
 
 -- vim.g.clipboard = {
 -- 	name = "clip-wsl",
