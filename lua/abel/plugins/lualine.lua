@@ -1,61 +1,3 @@
-local colors = {
-	magenta = "#ff66b2",
-	blue = "#66d9ff",
-	cyan = "#66ffcc",
-	red = "#ff6666",
-	yellow = "#ffeb66",
-	black = "#202020",
-	grey = "#505050",
-	white = "#ffffff",
-}
-
-local neon_theme = {
-	normal = {
-		a = { fg = colors.black, bg = colors.white },
-		b = { fg = colors.white, bg = colors.black },
-		c = { fg = colors.white, bg = colors.black },
-	},
-	insert = { a = { fg = colors.black, bg = colors.blue } },
-	visual = { a = { fg = colors.black, bg = colors.cyan } },
-	replace = { a = { fg = colors.black, bg = colors.red } },
-	command = { a = { fg = colors.black, bg = colors.yellow } },
-	inactive = {
-		a = { fg = colors.white, bg = colors.black },
-		b = { fg = colors.white, bg = colors.black },
-		c = { fg = colors.white, bg = colors.black },
-	},
-}
-
-local emojis = {
-	"ᕙ(⇀‸↼‶)ᕗ",
-	"(ง •̀_•́)ง",
-	"ˁ˚ᴥ˚ˀ",
-	"❚█══█❚",
-	"┌∩┐(◣_◢)┌∩┐",
-	"d[-_-]b",
-	"[¬º-°]¬",
-	"(‾⌣‾)",
-	"╰(°▽°)╯",
-}
-local current_emoji = emojis[1]
-local last_update = 0
-
-local function get_wiggly_emoji()
-	local now = os.time()
-
-	-- Update every x seconds (adjust as desired)
-	if now - last_update > 10 then
-		last_update = now
-		math.randomseed(os.time() + math.random(1000))
-
-		local base = emojis[math.random(#emojis)]
-
-		current_emoji = base
-	end
-
-	return current_emoji
-end
-
 return {
 	"nvim-lualine/lualine.nvim",
 	dependencies = { "nvim-tree/nvim-web-devicons" },
@@ -70,7 +12,7 @@ return {
 				section_separators = { left = "", right = "" },
 				icons_enabled = true,
 				globalstatus = true,
-				always_show_tabline = true,
+				always_show_tabline = false,
 			},
 			sections = {
 				lualine_a = {
