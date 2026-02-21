@@ -1,13 +1,10 @@
 local dap = require("dap")
 local dapui = require("dapui")
--- local dap_python = require("dap-python")
 
 dapui.setup()
 require("nvim-dap-virtual-text").setup({
 	commented = true, -- Show virtual text alongside comment
 })
-
--- dap_python.setup("python3")
 
 vim.fn.sign_define("DapBreakpoint", {
 	text = "",
@@ -30,14 +27,7 @@ vim.fn.sign_define("DapStopped", {
 	numhl = "DiagnosticSignWarn",
 })
 
--- dap.listeners.before.attach.dapui_config = function()
--- 	pcall(vim.cmd, "Neotree close")
--- 	dapui.open()
--- end
--- dap.listeners.before.launch.dapui_config = function()
--- 	pcall(vim.cmd, "Neotree close")
--- 	dapui.open()
--- end
+
 dap.listeners.before.event_terminated.dapui_config = function()
 	dapui.close()
 end
@@ -51,6 +41,59 @@ dap.listeners.after.event_initialized["dapui_config"] = function()
 	dapui.open()
 end
 
+local C = require("catppuccin.palettes").get_palette()
+
+local debug_theme = {
+	normal = {
+		a = { bg = C.peach, fg = C.base, gui = "bold" },
+		b = { bg = C.surface1, fg = C.text },
+		c = { bg = C.base, fg = C.text },
+	},
+
+	insert = {
+		a = { bg = C.green, fg = C.base, gui = "bold" },
+		b = { bg = C.surface1, fg = C.text },
+		c = { bg = C.base, fg = C.text },
+	},
+
+	visual = {
+		a = { bg = C.blue, fg = C.base, gui = "bold" },
+		b = { bg = C.surface1, fg = C.text },
+		c = { bg = C.base, fg = C.text },
+	},
+
+	replace = {
+		a = { bg = C.mauve, fg = C.base, gui = "bold" },
+		b = { bg = C.surface1, fg = C.text },
+		c = { bg = C.base, fg = C.text },
+	},
+
+	command = {
+		a = { bg = C.yellow, fg = C.base, gui = "bold" },
+		b = { bg = C.surface1, fg = C.text },
+		c = { bg = C.base, fg = C.text },
+	},
+
+	inactive = {
+		a = { bg = C.mantle, fg = C.overlay1 },
+		b = { bg = C.mantle, fg = C.overlay1 },
+		c = { bg = C.mantle, fg = C.overlay1 },
+	},
+}
+
+local lualine = require("lualine")
+local function set_debug_lualine_theme()
+	lualine.setup({ options = { theme = debug_theme } })
+end
+
+local function restore_lualine_theme()
+	lualine.setup({ options = { theme = "auto" } })
+end
+
+dap.listeners.after.event_initialized["lualine_theme"] = set_debug_lualine_theme
+dap.listeners.before.event_terminated["lualine_theme"] = restore_lualine_theme
+dap.listeners.before.event_exited["lualine_theme"] = restore_lualine_theme
+
 
 require("dap-python").setup(vim.fn.getcwd() .. "/.venv/bin/python")
 dap.configurations.python = {
@@ -59,90 +102,7 @@ dap.configurations.python = {
 		request = "launch",
 		name = "Click: run slidev",
 		program = "run_script.py",
-		justMyCode = false,
+		justMyCode = true,
 		console = "integratedTerminal",
 	},
 }
-
-require("dapui").setup({
-	layouts = {
-		{
-			elements = {
-				{ id = "scopes",      size = 0.25 },
-				{ id = "breakpoints", size = 0.25 },
-				{ id = "stacks",      size = 0.25 },
-				{ id = "watches",     size = 0.25 },
-			},
-			size = 40, -- columns
-			position = "left",
-		},
-		{
-			elements = {
-				"repl",
-				"console",
-			},
-			size = 10, -- lines
-			position = "bottom",
-		},
-	},
-})
-
-vim.api.nvim_create_autocmd("FileType", {
-	pattern = "neo-tree",
-	callback = function()
-		dapui.close()
-	end,
-})
-
-
--- Ensure nvim-dap is installed
-local dap_ok, dap = pcall(require, 'dap')
-if not dap_ok then
-	return
-end
-
--- ===============================
--- Keymaps for DAP
--- ===============================
--- Only active when a buffer is in debug mode
-local function set_dap_keymaps()
-	local opts = { noremap = true, silent = true, buffer = 0 }
-
-	-- Stepping
-	vim.keymap.set('n', 'n', dap.step_over, opts) -- step over
-	vim.keymap.set('n', 'i', dap.step_into, opts) -- step into
-	vim.keymap.set('n', 'o', dap.step_out, opts) -- step out
-	vim.keymap.set('n', 'c', dap.continue, opts) -- continue
-
-	-- Breakpoints
-	vim.keymap.set('n', 'b', dap.toggle_breakpoint, opts) -- toggle breakpoint
-	vim.keymap.set('n', 'B', function()                  -- conditional breakpoint
-		dap.set_breakpoint(vim.fn.input('Breakpoint condition: '))
-	end, opts)
-
-	-- REPL and hover
-	vim.keymap.set('n', 'r', dap.repl.open, opts) -- open REPL
-	vim.keymap.set('n', 'h', dap.hover, opts)    -- hover variables
-
-	-- Run to cursor
-	vim.keymap.set('n', 'R', dap.run_to_cursor, opts)
-end
-
--- ===============================
--- Automatically set keymaps when DAP starts
--- ===============================
-vim.api.nvim_create_autocmd("User", {
-	pattern = "DAPStarted",
-	callback = function()
-		print("Debug session started.")
-		set_dap_keymaps()
-	end
-})
-
--- Optional: Clear keymaps when DAP stops
-vim.api.nvim_create_autocmd("User", {
-	pattern = "DAPTerminated",
-	callback = function()
-		-- Keymaps are buffer-local, they disappear automatically
-	end
-})
