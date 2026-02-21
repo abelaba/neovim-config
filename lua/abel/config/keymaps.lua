@@ -69,7 +69,7 @@ map("n", "<leader>e", function()
 		dir = root,
 	})
 end, { noremap = true, silent = true, desc = "Toggle Neo-tree at project root" })
-map({ "t", "n" }, "<C-\\>", function()
+map({ "t", "n" }, "<leader>`", function()
 	Snacks.terminal()
 end, { desc = "Close terminal", silent = true })
 
@@ -79,7 +79,6 @@ map("n", "<S-l>", "<cmd>bnext<cr>", { desc = "Next Buffer" })
 map("n", "[b", "<cmd>bprevious<cr>", { desc = "Prev Buffer" })
 map("n", "]b", "<cmd>bnext<cr>", { desc = "Next Buffer" })
 map("n", "<leader>bb", "<cmd>e #<cr>", { desc = "Switch to Other Buffer" })
-map("n", "<leader>`", "<cmd>e #<cr>", { desc = "Switch to Other Buffer" })
 map("n", "<leader>bd", function() Snacks.bufdelete() end, { desc = "Delete Buffer" })
 map("n", "<leader>bo", function() Snacks.bufdelete.other() end, { desc = "Delete Other Buffers" })
 map("n", "<leader>bD", "<cmd>:bd<cr>", { desc = "Delete Buffer and Window" })
@@ -159,7 +158,7 @@ end, { desc = "DAP conditional breakpoint" })
 
 map("n", "<leader>dr", dap.restart, { desc = "DAP restart" })
 map("n", "<leader>dq", dap.terminate, { desc = "DAP terminate" })
-map("n", "<leader>dn", dap.run, { desc = "DAP new session" })
+map("n", "<leader>dn", "<cmd>DapNew<cr>", { desc = "DAP new session" })
 
 -- -------------------------
 -- DAP UI
