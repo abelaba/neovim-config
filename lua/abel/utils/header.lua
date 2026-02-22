@@ -126,10 +126,10 @@ M.motivational_quotes = {
 	[[I am not a product of my circumstances. I am a product of my decisions. – Stephen Covey]],
 	[[Everything you’ve ever wanted is on the other side of fear. – George Addair]],
 }
+
 function M.Get_greeting()
 	local hour = os.date("*t").hour
 	local greetings
-	local emoji
 
 	if hour < 12 then
 		greetings = M.good_morning
