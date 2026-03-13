@@ -68,6 +68,7 @@ map("n", "<leader>e", function()
 		toggle = true,
 		dir = root,
 	})
+	require("dapui").close()
 end, { noremap = true, silent = true, desc = "Toggle Neo-tree at project root" })
 map({ "t", "n" }, "<leader>`", function()
 	Snacks.terminal()
