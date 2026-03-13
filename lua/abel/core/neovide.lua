@@ -12,7 +12,8 @@ if vim.g.neovide then
 	vim.g.neovide_cursor_trail_size = 0.1
 	vim.g.neovide_cursor_antialiasing = true
 	vim.g.neovide_cursor_animate_command_line = true
-	vim.g.neovide_scale_factor = 1.2
+
+	vim.g.neovide_scale_factor = 1
 
 	-- Transparency
 	vim.g.neovide_opacity = 1
