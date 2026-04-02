@@ -61,9 +61,6 @@ require("telescope").setup({
 			override_file_sorter = true,
 			case_mode = "smart_case",
 		},
-		undo = {
-			-- telescope-undo.nvim config, see below
-		},
 	},
 	defaults = vim.tbl_deep_extend("force", fullscreen_setup, {
 		mappings = {
@@ -78,4 +75,3 @@ require("telescope").setup({
 })
 
 require("telescope").load_extension("fzf")
-require("telescope").load_extension("undo")
