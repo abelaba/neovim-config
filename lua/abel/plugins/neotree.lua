@@ -7,9 +7,15 @@ return {
 		"MunifTanjim/nui.nvim",
 		-- {"3rd/image.nvim", opts = {}}, -- Optional image support in preview window: See `# Preview Mode` for more information
 	},
-	lazy = false, -- neo-tree will lazily load itself
+	lazy = false,      -- neo-tree will lazily load itself
 	opts = {
 		position = "left", -- or "right"
-		width = 35, -- set your preferred width
+		width = 35,      -- set your preferred width
+		filesystem = {
+			use_libuv_file_watcher = true,
+			follow_current_file = {
+				enabled = true, -- keep the tree focused on whatever file you're editing
+			},
+		},
 	},
 }
