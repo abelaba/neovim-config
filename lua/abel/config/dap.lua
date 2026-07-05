@@ -14,14 +14,14 @@ vim.fn.sign_define("DapBreakpoint", {
 })
 
 vim.fn.sign_define("DapBreakpointRejected", {
-	text = "", -- or "❌"
+	text = "",
 	texthl = "DiagnosticSignError",
 	linehl = "",
 	numhl = "",
 })
 
 vim.fn.sign_define("DapStopped", {
-	text = "", -- or "→"
+	text = "",
 	texthl = "DiagnosticSignWarn",
 	linehl = "Visual",
 	numhl = "DiagnosticSignWarn",
