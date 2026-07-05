@@ -42,7 +42,7 @@ dap.listeners.after.event_initialized["dapui_config"] = function()
 end
 
 
-require("dap-python").setup(vim.env.VIRTUAL_ENV)
+require("dap-python").setup(vim.fn.getcwd() .. "/.venv/bin/python")
 
 dap.configurations.python = {
 	{

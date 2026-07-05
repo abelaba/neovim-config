@@ -11,35 +11,32 @@ wk.add({ { "<leader>s", group = "Buffer controls" } })
 wk.add({ { "<leader>u", group = "UI controls" } })
 wk.add({ { "<leader>x", group = "Trouble" } })
 
--- Map Ctrl+Z to undo
+-- Map Cmd+Z / Ctrl+Z to undo
+map({ "n", "v", "x" }, "<D-z>", "u", { noremap = true, silent = true })
+map("i", "<D-z>", "<C-o>u", { noremap = true, silent = true })
 map({ "n", "v", "x" }, "<C-z>", "u", { noremap = true, silent = true })
 map("i", "<C-z>", "<C-o>u", { noremap = true, silent = true })
--- Ctrl+C as global copy (yanking to clipboard)
-map({ "n", "v", "x" }, "<C-c>", '"+y', { noremap = true, silent = true })
-map("i", "<C-c>", '<Esc>"+y', { noremap = true, silent = true })
+-- Cmd+C as global copy (yanking to clipboard)
+map({ "n", "v", "x" }, "<D-c>", '"+y', { noremap = true, silent = true })
+map("i", "<D-c>", '<Esc>"+y', { noremap = true, silent = true })
 
--- Ctrl+V as global paste (pasting from clipboard)
-map({ "n", "v", "x" }, "<C-v>", '"+p', { noremap = true, silent = true })
-map("i", "<C-v>", '<Esc>"+p', { noremap = true, silent = true })
+-- Cmd+V as global paste (pasting from clipboard)
+map({ "n", "v", "x" }, "<D-v>", '"+p', { noremap = true, silent = true })
+map("i", "<D-v>", '<Esc>"+p', { noremap = true, silent = true })
 
--- Map Ctrl+X to cut (yank and delete to clipboard)
-map({ "n", "v", "x" }, "<C-x>", '"+d', { noremap = true, silent = true })
-map("i", "<C-x>", '<Esc>"+d', { noremap = true, silent = true })
+-- Map Cmd+X to cut (yank and delete to clipboard)
+map({ "n", "v", "x" }, "<D-x>", '"+d', { noremap = true, silent = true })
+map("i", "<D-x>", '<Esc>"+d', { noremap = true, silent = true })
 
 
 -- Map Ctrl+S to save
-map({ "n", "v", "x" }, "<C-s>", ":w<CR>", { noremap = true, silent = true })
-map("i", "<C-s>", "<Esc>:w<CR>", { noremap = true, silent = true })
+map({ "n", "v", "x" }, "<D-s>", ":w<CR>", { noremap = true, silent = true })
+map("i", "<D-s>", "<Esc>:w<CR>", { noremap = true, silent = true })
 -- Map Ctrl + A
 map({ "n", "i", "v", "x" }, "<C-a>", "<Esc>ggVG", { noremap = true, silent = true })
 
 map({ "n", "v", "x" }, "<leader>w", ":bd<CR>", { noremap = true, silent = true, desc = "Close Buffer" })
 map("n", "<C-t>", ":terminal<CR>", { noremap = true, silent = true })
-map("n", "<leader>c", function()
-	local virtual_text = require("codeium.config").options.virtual_text
-	virtual_text.manual = not virtual_text.manual
-	print("Codeium virtual text is now " .. (not virtual_text.manual and "enabled" or "disabled"))
-end, { noremap = true, silent = true, desc = "Toggle Codeium virtual text" })
 
 local gitsigns = require("gitsigns")
 map("n", "<leader>hs", gitsigns.stage_hunk, { desc = "Stage hunk" })
