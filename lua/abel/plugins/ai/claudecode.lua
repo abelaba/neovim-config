@@ -2,7 +2,7 @@ return {
 	"coder/claudecode.nvim",
 	dependencies = { "folke/snacks.nvim" },
 	config = true,
-	opts = { terminal = { provider = "none" }, track_selection = false },
+	opts = { terminal = { provider = "none" }, track_selection = true },
 	-- `cmd` lets lazy.nvim create command stubs that load the plugin on first use,
 	-- so `:ClaudeCode` and friends work on a fresh start. Without it, a keys-only
 	-- spec defers loading until a <leader>a* mapping is pressed and the commands

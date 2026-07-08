@@ -15,6 +15,20 @@ vim.g.maplocalleader     = "\\"
 vim.opt.foldmethod       = "indent"
 vim.opt.foldlevel        = 99
 vim.opt.fillchars:append({ eob = " " })
+
+-- Persistent undo: per-file undo history survives buffer reloads,
+-- so external edits (e.g. by coding agents) can always be undone
+vim.opt.undofile         = true
+
+-- Reload buffers when files change on disk (e.g. edited by a coding agent)
+vim.opt.autoread         = true
+vim.api.nvim_create_autocmd({ "FocusGained", "BufEnter", "CursorHold", "TermLeave", "TermClose" }, {
+	callback = function()
+		if vim.fn.getcmdwintype() == "" then
+			vim.cmd("checktime")
+		end
+	end,
+})
 -- vim.opt.shell = "cmd"
 --
 local is_windows = vim.fn.has("win32") == 1
