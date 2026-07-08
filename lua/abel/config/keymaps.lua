@@ -2,6 +2,7 @@ local map = vim.keymap.set
 local wk = require("which-key")
 
 
+wk.add({ { "<leader>g", group = "Git" } })
 wk.add({ { "<leader>h", group = "Gitsigns" } })
 wk.add({ { "<leader>q", group = "Persistence" } })
 wk.add({ { "<leader>t", group = "Neotest" } })
