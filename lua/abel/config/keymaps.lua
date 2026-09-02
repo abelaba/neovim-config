@@ -2,6 +2,7 @@ local map = vim.keymap.set
 local wk = require("which-key")
 
 
+wk.add({ { "<leader>a", group = "AI agent" } })
 wk.add({ { "<leader>g", group = "Git" } })
 wk.add({ { "<leader>h", group = "Gitsigns" } })
 wk.add({ { "<leader>q", group = "Persistence" } })
@@ -54,6 +55,27 @@ map("n", "<leader>tb", gitsigns.toggle_current_line_blame, { desc = "Toggle curr
 map("n", "<leader>hd", gitsigns.diffthis, { desc = "Diff this" })
 map("n", "<leader>hD", function() gitsigns.diffthis("~") end, { desc = "Diff this ~" })
 map("n", "<leader>gg", ":GitTab<CR>", { desc = "GitUI" })
+
+-- Coding agent actions (agent-independent, see abel.utils.agent)
+local agent = require("abel.utils.agent")
+map("n", "<leader>ab", agent.add_buffer, { desc = "Add current buffer to agent" })
+map("v", "<leader>as", agent.send_selection, { desc = "Send selection to agent" })
+map("n", "<leader>aa", agent.accept_diff, { desc = "Accept agent diff" })
+map("n", "<leader>ad", agent.deny_diff, { desc = "Deny agent diff" })
+vim.api.nvim_create_autocmd("FileType", {
+	pattern = { "NvimTree", "neo-tree", "oil", "minifiles", "netrw", "snacks_picker_list" },
+	callback = function(ev)
+		map("n", "<leader>as", agent.add_tree_file, { buffer = ev.buf, desc = "Add file to agent" })
+	end,
+})
+
+-- Review comments for coding agents (agent-independent, see abel.utils.review)
+local review = require("abel.utils.review")
+map({ "n", "v" }, "<leader>am", review.add_comment, { desc = "Add review comment (line range or file)" })
+map("n", "<leader>aM", function() review.send_review() end, { desc = "Send review comments to agent" })
+map("n", "<leader>ay", function() review.send_review("clipboard") end, { desc = "Yank review comments to clipboard" })
+map("n", "<leader>al", review.show_review, { desc = "List review comments" })
+map("n", "<leader>ax", review.clear_review, { desc = "Clear review comments" })
 
 -- Text object
 map({ "o", "x" }, "ih", ":<C-U>Gitsigns select_hunk<CR>")

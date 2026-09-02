@@ -1,6 +1,7 @@
 -- disable netrw at the very start of your init.lua
 vim.g.loaded_netrw       = 1
 vim.g.loaded_netrwPlugin = 1
+vim.opt.title            = false
 
 -- optionally enable 24-bit colour
 vim.opt.termguicolors    = true
@@ -18,10 +19,10 @@ vim.opt.fillchars:append({ eob = " " })
 
 -- Persistent undo: per-file undo history survives buffer reloads,
 -- so external edits (e.g. by coding agents) can always be undone
-vim.opt.undofile         = true
+vim.opt.undofile = true
 
 -- Reload buffers when files change on disk (e.g. edited by a coding agent)
-vim.opt.autoread         = true
+vim.opt.autoread = true
 vim.api.nvim_create_autocmd({ "FocusGained", "BufEnter", "CursorHold", "TermLeave", "TermClose" }, {
 	callback = function()
 		if vim.fn.getcmdwintype() == "" then
@@ -54,6 +55,7 @@ end
 require("abel.neovide")
 require("abel.lazy")
 require("abel.config")
+-- require('vim._core.ui2').enable()
 
 -- setup must be called before loading
 vim.cmd.colorscheme("catppuccin")

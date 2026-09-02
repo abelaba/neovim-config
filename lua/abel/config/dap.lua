@@ -41,16 +41,22 @@ dap.listeners.after.event_initialized["dapui_config"] = function()
 	dapui.open()
 end
 
+dap.set_exception_breakpoints({ "raised" })
 
-require("dap-python").setup(vim.fn.getcwd() .. "/.venv/bin/python")
 
-dap.configurations.python = {
-	{
-		type = "python",
-		request = "launch",
-		name = "Click: run slidev",
-		program = "run_script.py",
-		justMyCode = false,
-		console = "integratedTerminal",
-	},
-}
+local python = require("abel.utils.python")
+
+-- The adapter runs on Mason's debugpy install; the debugged program runs on
+-- the interpreter returned by resolve_python (venv, pixi, conda, ...).
+local dap_python = require("dap-python")
+dap_python.setup(python.debugpy_python())
+dap_python.resolve_python = python.find_project_python
+
+table.insert(dap.configurations.python, {
+	type = "python",
+	request = "launch",
+	name = "Launch current file (justMyCode=false)",
+	program = "${file}",
+	justMyCode = false,
+	console = "integratedTerminal",
+})
